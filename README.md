@@ -14,31 +14,7 @@ Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para
 
 ## Arquitetura
 
-```
-+------------------------------------------------------+
-|             Databricks App (FastAPI)                  |
-|                                                      |
-|  Arquivos Estáticos (HTML/JS/CSS)                    |
-|  +-- Tela de Cadastro                                |
-|  +-- Jogo T-Rex (HTML5 Canvas)                       |
-|  +-- Comparação IA vs Humano (Model Serving)          |
-|  +-- Ranking                                         |
-|                                                      |
-|  Endpoints da API                                    |
-|  +-- POST /api/register                              |
-|  +-- POST /api/score                                 |
-|  +-- GET  /api/leaderboard                           |
-|  +-- GET  /api/stats                                 |
-+------------------------------------------------------+
-|  Lakebase         |  Model Serving  |  Unity Catalog |
-|  (PostgreSQL)     |  (LLM - FMAPI) |  selbetti.*    |
-|  - players        |  - oponente IA  |                |
-|  - game_sessions  |  - análise      |  Genie Space   |
-|                   |                 |  (consultas    |
-|                   |                 |   em linguagem |
-|                   |                 |   natural)     |
-+------------------------------------------------------+
-```
+![Arquitetura de Alto Nível](images/architecture.svg)
 
 ## Fluxo do Usuário
 

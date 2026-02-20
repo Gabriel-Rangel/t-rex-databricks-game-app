@@ -1,0 +1,288 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 608" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrowDown" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M1,1 L4,7 L7,1" fill="none" stroke="#888" stroke-width="1.5"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="608" fill="#F3EDE7" rx="8"/>
+
+  <!-- ═══ USERS LAYER ═══ -->
+  <g transform="translate(30, 24)">
+    <!-- Layer label -->
+    <rect width="80" height="24" rx="4" fill="#6B7280"/>
+    <text x="40" y="16" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">USERS</text>
+
+    <!-- User box -->
+    <g transform="translate(350, -6)" filter="url(#shadow)">
+      <rect width="200" height="56" rx="10" fill="#fff" stroke="#D1D5DB" stroke-width="1.2"/>
+      <g transform="translate(20, 12)">
+        <!-- Person icon -->
+        <circle cx="14" cy="8" r="7" fill="none" stroke="#6B7280" stroke-width="1.5"/>
+        <path d="M2,28 C2,20 26,20 26,28" fill="none" stroke="#6B7280" stroke-width="1.5"/>
+      </g>
+      <text x="62" y="24" fill="#1B1B1D" font-size="12" font-weight="600">Player</text>
+      <text x="62" y="40" fill="#888" font-size="9">Web Browser</text>
+    </g>
+  </g>
+
+  <!-- Arrow: Users → App Platform -->
+  <line x1="480" y1="84" x2="480" y2="114" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="504" y="104" fill="#D42E1B" font-size="8" font-weight="600">HTTPS</text>
+
+  <!-- ═══ DATABRICKS APPS PLATFORM ═══ -->
+  <g transform="translate(30, 116)">
+    <!-- Layer label -->
+    <rect width="170" height="24" rx="4" fill="#D42E1B"/>
+    <text x="85" y="16" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">DATABRICKS APPS PLATFORM</text>
+
+    <!-- Main app box -->
+    <g transform="translate(60, 38)" filter="url(#shadow)">
+      <rect width="780" height="220" rx="12" fill="#fff" stroke="#FF3621" stroke-width="2" stroke-opacity="0.5"/>
+
+      <!-- App header -->
+      <g transform="translate(20, 16)">
+        <!-- Databricks diamond icon -->
+        <g transform="translate(0, -2)">
+          <path d="M10 0L19.6 5v10L10 20 .4 15V5L10 0z" fill="#FF3621"/>
+          <path d="M10 3.3l6.4 3.7v7.3L10 17.7 3.6 14V6.7L10 3.3z" fill="#fff"/>
+          <path d="M10 6.7l3.2 1.8v3.7L10 14l-3.2-1.8V8.5L10 6.7z" fill="#FF3621"/>
+        </g>
+        <text x="28" y="8" fill="#1B1B1D" font-size="14" font-weight="700">T-Rex Runner</text>
+        <text x="28" y="22" fill="#888" font-size="9">Databricks App</text>
+      </g>
+
+      <!-- Divider line -->
+      <line x1="20" y1="50" x2="760" y2="50" stroke="#E5E7EB" stroke-width="1"/>
+
+      <!-- Sub-components -->
+      <!-- Frontend SPA -->
+      <g transform="translate(20, 62)">
+        <rect width="230" height="140" rx="8" fill="#FAFAFA" stroke="#E5E7EB" stroke-width="1"/>
+        <text x="115" y="22" text-anchor="middle" fill="#1B1B1D" font-size="11" font-weight="600">Frontend SPA</text>
+        <text x="115" y="36" text-anchor="middle" fill="#999" font-size="8">HTML5 Canvas + JavaScript</text>
+        <line x1="10" y1="44" x2="220" y2="44" stroke="#E5E7EB" stroke-width="0.8"/>
+        <!-- Screen list -->
+        <g transform="translate(14, 54)" fill="#555" font-size="9">
+          <circle cx="4" cy="-3" r="2.5" fill="#FF3621" opacity="0.6"/>
+          <text x="12" y="0">Tela de Cadastro</text>
+          <circle cx="4" cy="15" r="2.5" fill="#FF3621" opacity="0.6"/>
+          <text x="12" y="18">Jogo T-Rex (Pixel Art)</text>
+          <circle cx="4" cy="33" r="2.5" fill="#FF3621" opacity="0.6"/>
+          <text x="12" y="36">Animação IA Jogando</text>
+          <circle cx="4" cy="51" r="2.5" fill="#FF3621" opacity="0.6"/>
+          <text x="12" y="54">Tela de Resultados</text>
+          <circle cx="4" cy="69" r="2.5" fill="#FF3621" opacity="0.6"/>
+          <text x="12" y="72">Ranking + Chat Genie</text>
+        </g>
+      </g>
+
+      <!-- API Endpoints -->
+      <g transform="translate(270, 62)">
+        <rect width="230" height="140" rx="8" fill="#FAFAFA" stroke="#E5E7EB" stroke-width="1"/>
+        <text x="115" y="22" text-anchor="middle" fill="#1B1B1D" font-size="11" font-weight="600">API Endpoints</text>
+        <text x="115" y="36" text-anchor="middle" fill="#999" font-size="8">FastAPI</text>
+        <line x1="10" y1="44" x2="220" y2="44" stroke="#E5E7EB" stroke-width="0.8"/>
+        <g transform="translate(14, 54)" fill="#555" font-size="9">
+          <text y="0" font-family="monospace" font-size="8.5">POST /api/register</text>
+          <text y="18" font-family="monospace" font-size="8.5">POST /api/score</text>
+          <text y="36" font-family="monospace" font-size="8.5">GET  /api/leaderboard</text>
+          <text y="54" font-family="monospace" font-size="8.5">GET  /api/stats</text>
+          <text y="72" font-family="monospace" font-size="8.5">POST /api/genie/ask</text>
+        </g>
+      </g>
+
+      <!-- Backend Modules -->
+      <g transform="translate(520, 62)">
+        <rect width="240" height="140" rx="8" fill="#FAFAFA" stroke="#E5E7EB" stroke-width="1"/>
+        <text x="120" y="22" text-anchor="middle" fill="#1B1B1D" font-size="11" font-weight="600">Módulos Backend</text>
+        <text x="120" y="36" text-anchor="middle" fill="#999" font-size="8">Python + Databricks SDK</text>
+        <line x1="10" y1="44" x2="230" y2="44" stroke="#E5E7EB" stroke-width="0.8"/>
+
+        <!-- db.py -->
+        <g transform="translate(14, 56)">
+          <rect width="64" height="32" rx="6" fill="#fff" stroke="#00A854" stroke-width="1.5"/>
+          <text x="32" y="14" text-anchor="middle" fill="#00A854" font-size="9" font-weight="700">db.py</text>
+          <text x="32" y="26" text-anchor="middle" fill="#999" font-size="6.5">Lakebase</text>
+        </g>
+
+        <!-- llm.py -->
+        <g transform="translate(88, 56)">
+          <rect width="64" height="32" rx="6" fill="#fff" stroke="#2563EB" stroke-width="1.5"/>
+          <text x="32" y="14" text-anchor="middle" fill="#2563EB" font-size="9" font-weight="700">llm.py</text>
+          <text x="32" y="26" text-anchor="middle" fill="#999" font-size="6.5">FMAPI</text>
+        </g>
+
+        <!-- genie.py -->
+        <g transform="translate(162, 56)">
+          <rect width="64" height="32" rx="6" fill="#fff" stroke="#7C3AED" stroke-width="1.5"/>
+          <text x="32" y="14" text-anchor="middle" fill="#7C3AED" font-size="9" font-weight="700">genie.py</text>
+          <text x="32" y="26" text-anchor="middle" fill="#999" font-size="6.5">Genie API</text>
+        </g>
+
+        <!-- Auth info -->
+        <g transform="translate(14, 100)">
+          <rect width="212" height="26" rx="5" fill="#FFF7ED" stroke="#FDBA74" stroke-width="0.8"/>
+          <text x="106" y="17" text-anchor="middle" fill="#C2410C" font-size="8">Service Principal (OAuth Token Auto-Refresh)</text>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- ═══ ARROWS: App → Services ═══ -->
+  <!-- Arrow to Lakebase -->
+  <g>
+    <line x1="182" y1="376" x2="182" y2="414" stroke="#00A854" stroke-width="2"/>
+    <polygon points="176,412 182,422 188,412" fill="#00A854"/>
+    <text x="200" y="402" fill="#00A854" font-size="8" font-weight="600">OAuth Token</text>
+  </g>
+
+  <!-- Arrow to Model Serving -->
+  <g>
+    <line x1="420" y1="376" x2="420" y2="414" stroke="#2563EB" stroke-width="2"/>
+    <polygon points="414,412 420,422 426,412" fill="#2563EB"/>
+    <text x="438" y="402" fill="#2563EB" font-size="8" font-weight="600">OAuth Token</text>
+  </g>
+
+  <!-- Arrow to Unity Catalog -->
+  <g>
+    <line x1="650" y1="376" x2="650" y2="414" stroke="#D97706" stroke-width="2"/>
+    <polygon points="644,412 650,422 656,412" fill="#D97706"/>
+    <text x="668" y="402" fill="#D97706" font-size="8" font-weight="600">Catálogo Vinculado</text>
+  </g>
+
+  <!-- Arrow to Genie -->
+  <g>
+    <line x1="850" y1="376" x2="850" y2="414" stroke="#7C3AED" stroke-width="2"/>
+    <polygon points="844,412 850,422 856,412" fill="#7C3AED"/>
+    <text x="808" y="402" fill="#7C3AED" font-size="8" font-weight="600">Conversation API</text>
+  </g>
+
+  <!-- ═══ DATA & AI SERVICES LAYER ═══ -->
+  <g transform="translate(30, 394)">
+    <!-- Layer label -->
+    <rect width="150" height="24" rx="4" fill="#1E40AF"/>
+    <text x="75" y="16" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">DATA &amp; AI SERVICES</text>
+  </g>
+
+  <!-- Service boxes -->
+  <!-- Lakebase -->
+  <g transform="translate(58, 428)" filter="url(#shadow)">
+    <rect width="200" height="90" rx="10" fill="#fff" stroke="#00A854" stroke-width="1.8"/>
+    <rect y="0" width="200" height="4" rx="10" fill="#00A854"/>
+    <g transform="translate(16, 22)">
+      <!-- Database icon -->
+      <ellipse cx="14" cy="6" rx="12" ry="5" fill="none" stroke="#00A854" stroke-width="1.5"/>
+      <path d="M2,6 v12 c0,3 24,3 24,0 v-12" fill="none" stroke="#00A854" stroke-width="1.5"/>
+      <ellipse cx="14" cy="12" rx="12" ry="5" fill="none" stroke="#00A854" stroke-width="1.2" opacity="0.4"/>
+    </g>
+    <text x="52" y="28" fill="#1B1B1D" font-size="13" font-weight="700">Lakebase</text>
+    <text x="52" y="42" fill="#888" font-size="8.5">PostgreSQL Gerenciado</text>
+    <g transform="translate(16, 62)">
+      <rect width="168" height="16" rx="3" fill="#F0FDF4"/>
+      <text x="84" y="11" text-anchor="middle" fill="#00A854" font-size="7.5">OLTP - Baixa Latência</text>
+    </g>
+  </g>
+
+  <!-- Model Serving -->
+  <g transform="translate(290, 428)" filter="url(#shadow)">
+    <rect width="200" height="90" rx="10" fill="#fff" stroke="#2563EB" stroke-width="1.8"/>
+    <rect y="0" width="200" height="4" rx="10" fill="#2563EB"/>
+    <g transform="translate(16, 18)">
+      <!-- Brain/AI icon -->
+      <circle cx="14" cy="12" r="11" fill="none" stroke="#2563EB" stroke-width="1.5"/>
+      <path d="M8,8 Q14,2 20,8 M8,16 Q14,22 20,16 M9,12 L19,12" fill="none" stroke="#2563EB" stroke-width="1.2"/>
+    </g>
+    <text x="52" y="28" fill="#1B1B1D" font-size="13" font-weight="700">Model Serving</text>
+    <text x="52" y="42" fill="#888" font-size="8.5">Foundation Model API</text>
+    <g transform="translate(16, 62)">
+      <rect width="168" height="16" rx="3" fill="#EFF6FF"/>
+      <text x="84" y="11" text-anchor="middle" fill="#2563EB" font-size="7.5">Llama 3.3 70B Instruct</text>
+    </g>
+  </g>
+
+  <!-- Unity Catalog -->
+  <g transform="translate(522, 428)" filter="url(#shadow)">
+    <rect width="200" height="90" rx="10" fill="#fff" stroke="#D97706" stroke-width="1.8"/>
+    <rect y="0" width="200" height="4" rx="10" fill="#D97706"/>
+    <g transform="translate(16, 18)">
+      <!-- Catalog/shield icon -->
+      <rect x="2" y="2" width="22" height="22" rx="3" fill="none" stroke="#D97706" stroke-width="1.5"/>
+      <line x1="2" y1="10" x2="24" y2="10" stroke="#D97706" stroke-width="1.2"/>
+      <line x1="13" y1="10" x2="13" y2="24" stroke="#D97706" stroke-width="1.2"/>
+    </g>
+    <text x="52" y="28" fill="#1B1B1D" font-size="13" font-weight="700">Unity Catalog</text>
+    <text x="52" y="42" fill="#888" font-size="8.5">Governança de Dados</text>
+    <g transform="translate(16, 62)">
+      <rect width="168" height="16" rx="3" fill="#FFFBEB"/>
+      <text x="84" y="11" text-anchor="middle" fill="#D97706" font-size="7.5">Catálogo selbetti</text>
+    </g>
+  </g>
+
+  <!-- Genie Space -->
+  <g transform="translate(754, 428)" filter="url(#shadow)">
+    <rect width="175" height="90" rx="10" fill="#fff" stroke="#7C3AED" stroke-width="1.8"/>
+    <rect y="0" width="175" height="4" rx="10" fill="#7C3AED"/>
+    <g transform="translate(16, 18)">
+      <!-- Chat/sparkle icon -->
+      <rect x="2" y="4" width="20" height="16" rx="4" fill="none" stroke="#7C3AED" stroke-width="1.5"/>
+      <polygon points="8,20 6,26 14,20" fill="none" stroke="#7C3AED" stroke-width="1.2"/>
+      <circle cx="8" cy="12" r="1.5" fill="#7C3AED"/>
+      <circle cx="13" cy="12" r="1.5" fill="#7C3AED"/>
+      <circle cx="18" cy="12" r="1.5" fill="#7C3AED"/>
+    </g>
+    <text x="48" y="28" fill="#1B1B1D" font-size="13" font-weight="700">Genie</text>
+    <text x="48" y="42" fill="#888" font-size="8.5">Linguagem Natural</text>
+    <g transform="translate(16, 62)">
+      <rect width="143" height="16" rx="3" fill="#F5F3FF"/>
+      <text x="72" y="11" text-anchor="middle" fill="#7C3AED" font-size="7.5">Pergunta → SQL → Resultado</text>
+    </g>
+  </g>
+
+  <!-- ═══ FOOTER ═══ -->
+  <g transform="translate(30, 538)">
+    <rect width="900" height="52" rx="8" fill="#fff" stroke="#E5E7EB" stroke-width="0.8" opacity="0.7"/>
+    <g transform="translate(20, 18)">
+      <rect width="14" height="14" rx="3" fill="#00A854" opacity="0.2"/>
+      <rect x="2" y="2" width="10" height="10" rx="2" fill="#00A854"/>
+      <text x="22" y="12" fill="#555" font-size="8.5">Lakebase</text>
+
+      <g transform="translate(110, 0)">
+        <rect width="14" height="14" rx="3" fill="#2563EB" opacity="0.2"/>
+        <rect x="2" y="2" width="10" height="10" rx="2" fill="#2563EB"/>
+        <text x="22" y="12" fill="#555" font-size="8.5">Model Serving</text>
+      </g>
+
+      <g transform="translate(250, 0)">
+        <rect width="14" height="14" rx="3" fill="#D97706" opacity="0.2"/>
+        <rect x="2" y="2" width="10" height="10" rx="2" fill="#D97706"/>
+        <text x="22" y="12" fill="#555" font-size="8.5">Unity Catalog</text>
+      </g>
+
+      <g transform="translate(390, 0)">
+        <rect width="14" height="14" rx="3" fill="#7C3AED" opacity="0.2"/>
+        <rect x="2" y="2" width="10" height="10" rx="2" fill="#7C3AED"/>
+        <text x="22" y="12" fill="#555" font-size="8.5">Genie Space</text>
+      </g>
+
+      <g transform="translate(520, 0)">
+        <rect width="14" height="14" rx="3" fill="#FF3621" opacity="0.2"/>
+        <rect x="2" y="2" width="10" height="10" rx="2" fill="#FF3621"/>
+        <text x="22" y="12" fill="#555" font-size="8.5">Databricks Apps</text>
+      </g>
+    </g>
+
+    <!-- Databricks logo + text bottom right -->
+    <g transform="translate(730, 14)">
+      <path d="M10 0L19.6 5v10L10 20 .4 15V5L10 0z" fill="#FF3621"/>
+      <path d="M10 3.3l6.4 3.7v7.3L10 17.7 3.6 14V6.7L10 3.3z" fill="#F3EDE7"/>
+      <path d="M10 6.7l3.2 1.8v3.7L10 14l-3.2-1.8V8.5L10 6.7z" fill="#FF3621"/>
+      <text x="28" y="8" fill="#1B1B1D" font-size="10" font-weight="700">Databricks</text>
+      <text x="28" y="20" fill="#999" font-size="7">Stand de Conferência</text>
+    </g>
+  </g>
+</svg>
