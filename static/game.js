@@ -202,14 +202,15 @@ class TRexGame {
     this.ctx = canvas.getContext('2d');
     this.onGameOver = onGameOver;
 
-    // Virtual game dimensions (canvas is scaled via CSS)
-    this.W = 800;
-    this.H = 200;
+    // Size canvas to fill available space
+    const rect = canvas.parentElement.getBoundingClientRect();
+    this.W = Math.max(800, Math.floor(rect.width));
+    this.H = Math.max(250, Math.floor(window.innerHeight * 0.55));
     canvas.width = this.W;
     canvas.height = this.H;
 
-    this.GROUND_Y = 160;
-    this.DINO_X = 50;
+    this.GROUND_Y = this.H - 60;
+    this.DINO_X = 60;
 
     this._reset();
     this._bindInput();

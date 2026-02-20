@@ -325,6 +325,171 @@ function resetForNextPlayer() {
   loadStats();
 }
 
+// ── Genie Chat ────────────────────────────────────────────────
+const genieFab = document.getElementById('genie-fab');
+const geniePopup = document.getElementById('genie-popup');
+const genieClose = document.getElementById('genie-close');
+const genieInput = document.getElementById('genie-input');
+const genieSend = document.getElementById('genie-send');
+const genieMessages = document.getElementById('genie-messages');
+
+let genieConversationId = null;
+
+genieFab.addEventListener('click', () => {
+  geniePopup.classList.toggle('hidden');
+  if (!geniePopup.classList.contains('hidden')) {
+    genieInput.focus();
+  }
+});
+
+genieClose.addEventListener('click', () => {
+  geniePopup.classList.add('hidden');
+});
+
+genieSend.addEventListener('click', () => sendGenieQuestion());
+genieInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendGenieQuestion();
+});
+
+// Suggested question chips
+document.querySelectorAll('.genie-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const q = chip.dataset.q;
+    genieInput.value = q;
+    sendGenieQuestion();
+  });
+});
+
+async function sendGenieQuestion() {
+  const question = genieInput.value.trim();
+  if (!question) return;
+
+  genieInput.value = '';
+  genieSend.disabled = true;
+
+  // Remove suggestion chips after first question
+  const suggestions = genieMessages.querySelector('.genie-suggestions');
+  if (suggestions) suggestions.remove();
+
+  // Add user message
+  appendGenieMsg(question, 'user');
+
+  // Add loading indicator
+  const loadingEl = appendGenieMsg('Consultando...', 'bot genie-msg-loading');
+
+  try {
+    const data = await api('POST', '/api/genie/ask', {
+      question,
+      conversation_id: genieConversationId,
+    });
+
+    loadingEl.remove();
+
+    if (data.error) {
+      appendGenieMsg(data.error, 'bot error');
+    } else {
+      genieConversationId = data.conversation_id || genieConversationId;
+      renderGenieResponse(data);
+    }
+  } catch (e) {
+    loadingEl.remove();
+    appendGenieMsg('Erro na conexão. Tente novamente.', 'bot error');
+  }
+
+  genieSend.disabled = false;
+  genieMessages.scrollTop = genieMessages.scrollHeight;
+}
+
+function appendGenieMsg(text, type) {
+  const div = document.createElement('div');
+  div.className = `genie-msg genie-msg-${type}`;
+  div.textContent = text;
+  genieMessages.appendChild(div);
+  genieMessages.scrollTop = genieMessages.scrollHeight;
+  return div;
+}
+
+function renderGenieResponse(data) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'genie-msg genie-msg-bot';
+
+  // Text response
+  if (data.text) {
+    const p = document.createElement('div');
+    p.textContent = data.text;
+    wrapper.appendChild(p);
+  }
+
+  // Description
+  if (data.description) {
+    const desc = document.createElement('div');
+    desc.textContent = data.description;
+    desc.style.marginBottom = '6px';
+    wrapper.appendChild(desc);
+  }
+
+  // Data table
+  if (data.columns && data.data && data.data.length > 0) {
+    const table = document.createElement('table');
+    table.className = 'genie-data-table';
+
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    data.columns.forEach(col => {
+      const th = document.createElement('th');
+      th.textContent = col;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    data.data.forEach(row => {
+      const tr = document.createElement('tr');
+      row.forEach(cell => {
+        const td = document.createElement('td');
+        td.textContent = cell !== null ? cell : '-';
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    wrapper.appendChild(table);
+
+    if (!data.text && !data.description) {
+      const info = document.createElement('div');
+      info.textContent = `${data.data.length} resultado(s)`;
+      info.style.marginTop = '6px';
+      info.style.color = '#888';
+      info.style.fontSize = '8px';
+      wrapper.appendChild(info);
+    }
+  }
+
+  // SQL toggle
+  if (data.sql) {
+    const sqlId = 'sql-' + Date.now();
+    const toggle = document.createElement('button');
+    toggle.className = 'genie-sql-toggle';
+    toggle.textContent = 'Ver SQL';
+    toggle.addEventListener('click', () => {
+      const block = document.getElementById(sqlId);
+      block.classList.toggle('visible');
+      toggle.textContent = block.classList.contains('visible') ? 'Esconder SQL' : 'Ver SQL';
+    });
+    wrapper.appendChild(toggle);
+
+    const sqlBlock = document.createElement('pre');
+    sqlBlock.id = sqlId;
+    sqlBlock.className = 'genie-sql-block';
+    sqlBlock.textContent = data.sql;
+    wrapper.appendChild(sqlBlock);
+  }
+
+  genieMessages.appendChild(wrapper);
+  genieMessages.scrollTop = genieMessages.scrollHeight;
+}
+
 // ── Init ───────────────────────────────────────────────────────
 loadStats();
 

@@ -21,3 +21,6 @@ env:
 
   - name: LAKEBASE_PORT
     value: "5432"
+
+  - name: GENIE_SPACE_ID
+    value: "01f10e93a00012ba90fa5af86758879e"

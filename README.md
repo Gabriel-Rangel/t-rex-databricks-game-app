@@ -1,6 +1,6 @@
-# T-Rex Runner - App para Stand de Conferência Databricks
+# T-Rex Runner - App para Stand Databricks
 
-Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para stands de conferência (Selbetti). Os jogadores se cadastram, jogam o jogo, depois uma IA "joga" e um LLM gera comentários comparando as pontuações. Vença a IA e ganhe um brinde! Um ranking ao vivo classifica todos os jogadores.
+Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para stands de conferência. Os jogadores se cadastram, jogam o jogo, depois uma IA "joga" e um LLM gera comentários comparando as pontuações. Vença a IA e ganhe um brinde! Um ranking ao vivo classifica todos os jogadores, com um chat integrado do Genie para explorar os dados em linguagem natural.
 
 ## Funcionalidades Databricks Demonstradas
 
@@ -47,7 +47,7 @@ Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para
 3. **Envio de Pontuação** - Pontuação enviada para a API, armazenada no Lakebase
 4. **IA Joga** - Animação rápida da IA "jogando", LLM gera pontuação + comentário
 5. **Resultado** - Comparação lado a lado Humano vs IA, banner de brinde se o humano vencer
-6. **Ranking** - Classificação de todos os jogadores (atualiza automaticamente)
+6. **Ranking** - Classificação de todos os jogadores (atualiza automaticamente) + chat Genie para explorar dados
 7. **Volta ao Cadastro** - Pronto para o próximo visitante do stand
 
 ## Estrutura do Projeto
@@ -59,12 +59,13 @@ t-rex-app/
 +-- requirements.txt    # Dependências Python (psycopg2, openai, databricks-sdk)
 +-- db.py               # Conexão com Lakebase (tokens OAuth), gerenciamento de schema, CRUD
 +-- llm.py              # Integração com Foundation Model API (pontuação IA + comentários)
++-- genie.py            # Integração com Genie Conversation API (chat de linguagem natural)
 +-- README.md           # Este arquivo
 +-- static/
-    +-- index.html      # Single-page app (5 telas)
-    +-- style.css       # Tema escuro retro pixel-art (fonte Press Start 2P)
+    +-- index.html      # Single-page app (5 telas) com branding Databricks
+    +-- style.css       # Tema escuro com cores Databricks (fonte Press Start 2P)
     +-- game.js         # Motor do jogo T-Rex (HTML5 Canvas, sprites pixel-art)
-    +-- app.js          # Lógica do app (transições de tela, chamadas API, animação IA)
+    +-- app.js          # Lógica do app (transições de tela, chamadas API, chat Genie)
 ```
 
 ### Arquivos Backend
@@ -73,8 +74,9 @@ t-rex-app/
 |---------|-----------|
 | `app.py` | Servidor FastAPI. Monta arquivos estáticos, define endpoints da API, inicializa banco na startup. Inclui endpoint `/metrics` de health check exigido pelo proxy do Databricks Apps. |
 | `db.py` | Camada de conexão com Lakebase (PostgreSQL). Usa `databricks-sdk` para gerar tokens OAuth para o service principal do app. Cria automaticamente as tabelas `players` e `game_sessions` na startup. Inclui refresh automático de token em caso de falha de conexão. |
-| `llm.py` | Integração com Foundation Model API via cliente compatível com OpenAI. Gera pontuações da IA calibradas para humanos vencerem ~60% das vezes. Chama Llama 3.3 70B para comentários divertidos do jogo em português. Fallback para mensagens fixas se a chamada LLM falhar. |
-| `app.yaml` | Configuração de runtime do Databricks App. Roda `uvicorn` na porta **8000**. Define variáveis de ambiente para o serving endpoint e conexão Lakebase. |
+| `llm.py` | Integração com Foundation Model API via cliente compatível com OpenAI. Gera pontuações da IA calibradas para humanos vencerem ~30% das vezes. Chama Llama 3.3 70B para comentários divertidos do jogo em português. Fallback para mensagens fixas se a chamada LLM falhar. |
+| `genie.py` | Integração com Genie Conversation API via `databricks-sdk`. Permite que jogadores façam perguntas em linguagem natural sobre os dados do jogo diretamente no chat popup do ranking. |
+| `app.yaml` | Configuração de runtime do Databricks App. Roda `uvicorn` na porta **8000**. Define variáveis de ambiente para o serving endpoint, conexão Lakebase e Genie Space ID. |
 
 ### Arquivos Frontend
 
@@ -83,7 +85,7 @@ t-rex-app/
 | `index.html` | SPA com 5 telas: Cadastro, Jogo, IA Jogando, Resultados, Ranking. |
 | `style.css` | Tema escuro com estética retro pixel-art. Usa fonte `Press Start 2P` do Google Fonts. Responsivo para displays de stand e mobile. |
 | `game.js` | Clone completo do T-Rex runner. Sprites pixel-art renderizados em HTML5 Canvas. Dino corre, pula (Espaço/Cima) e abaixa (Baixo). Obstáculos: cactos (3 tipos) e pássaros. Aumento progressivo de velocidade, ciclo dia/noite, contagem de pontuação. |
-| `app.js` | Gerenciamento de telas, formulário de cadastro, chamadas API, animação da IA "jogando", animação de contagem de pontuação, renderização do ranking com auto-refresh. |
+| `app.js` | Gerenciamento de telas, formulário de cadastro, chamadas API, animação da IA "jogando", animação de contagem de pontuação, renderização do ranking com auto-refresh, e chat popup do Genie com sugestões de perguntas e renderização de tabelas de dados. |
 
 ## Pré-requisitos
 
@@ -259,6 +261,7 @@ databricks apps deploy t-rex-game \
 | `/api/score` | POST | Enviar pontuação. Body: `{"player_id", "player_name", "score"}`. Retorna pontuação da IA, comentário e resultado. |
 | `/api/leaderboard` | GET | Top 50 pontuações com informações dos jogadores |
 | `/api/stats` | GET | Total de jogadores, partidas, taxa de vitória dos humanos, melhor pontuação |
+| `/api/genie/ask` | POST | Pergunta ao Genie. Body: `{"question", "conversation_id?"}`. Retorna texto, SQL, colunas e dados. |
 
 ## Schema do Banco de Dados
 
@@ -318,4 +321,5 @@ databricks api post /api/2.0/genie/spaces --json '{
 - **`databricks-sdk>=0.81.0`**: Necessário no `requirements.txt` para a API `WorkspaceClient.database`. A versão pré-instalada no runtime do Apps é muito antiga.
 - **Permissões do schema**: O service principal precisa receber explicitamente `CREATE` + `USAGE` no schema `public` do Lakebase.
 - **Fallback do LLM**: Se a chamada à Foundation Model API falhar, comentários fixos em português são retornados para que o fluxo do jogo nunca seja interrompido.
-- **Calibração da pontuação IA**: Pontuações da IA usam `human_score * uniform(0.4, 1.4)` para que humanos vençam aproximadamente 60% das vezes.
+- **Calibração da pontuação IA**: Pontuações da IA usam `human_score * uniform(0.8, 1.6) + randint(-10, 30)` para que humanos vençam aproximadamente 30% das vezes.
+- **Chat Genie**: Popup de chat integrado na tela de ranking permite perguntas em linguagem natural sobre os dados do jogo. Usa a Genie Conversation API (`w.genie.start_conversation_and_wait`).

@@ -13,7 +13,7 @@ import genie
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="T-Rex Runner - Stand Selbetti")
+app = FastAPI(title="T-Rex Runner - Databricks")
 
 
 @app.on_event("startup")

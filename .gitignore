@@ -1,0 +1,5 @@
+.claude/*
+.databricks/*
+__pycache__/*
+*.pyc
+*.pyo

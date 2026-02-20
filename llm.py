@@ -19,10 +19,10 @@ def _get_client() -> OpenAI:
 
 
 def generate_ai_score(human_score: int) -> int:
-    """Generate an AI score calibrated so humans win ~60% of the time."""
-    factor = random.uniform(0.4, 1.4)
+    """Generate an AI score calibrated so humans win ~30% of the time."""
+    factor = random.uniform(0.8, 1.6)
     ai_score = int(human_score * factor)
-    ai_score = max(10, ai_score + random.randint(-20, 20))
+    ai_score = max(10, ai_score + random.randint(-10, 30))
     return ai_score
 
 

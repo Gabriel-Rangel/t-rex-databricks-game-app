@@ -74,10 +74,21 @@ def init_db():
             CREATE TABLE IF NOT EXISTS players (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
-                email VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL UNIQUE,
                 company VARCHAR(200),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
+        """)
+        # Add unique constraint if missing (for existing tables)
+        cur.execute("""
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM pg_constraint WHERE conname = 'players_email_key'
+                ) THEN
+                    ALTER TABLE players ADD CONSTRAINT players_email_key UNIQUE (email);
+                END IF;
+            END $$
         """)
         cur.execute("""
             CREATE TABLE IF NOT EXISTS game_sessions (
@@ -95,7 +106,9 @@ def init_db():
 def create_player(name: str, email: str, company: str = None) -> int:
     with get_cursor(commit=True) as cur:
         cur.execute(
-            "INSERT INTO players (name, email, company) VALUES (%s, %s, %s) RETURNING id",
+            """INSERT INTO players (name, email, company) VALUES (%s, %s, %s)
+               ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name, company = EXCLUDED.company
+               RETURNING id""",
             (name, email, company),
         )
         return cur.fetchone()["id"]
