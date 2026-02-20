@@ -1,16 +1,19 @@
+import os
 import logging
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from typing import Optional
 
 import db
 import llm
+import genie
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="T-Rex Runner - Selbetti Booth")
+app = FastAPI(title="T-Rex Runner - Stand Selbetti")
 
 
 @app.on_event("startup")
@@ -36,6 +39,11 @@ class ScoreRequest(BaseModel):
     player_id: int
     player_name: str
     score: int
+
+
+class GenieRequest(BaseModel):
+    question: str
+    conversation_id: Optional[str] = None
 
 
 # --- Health check (required by Databricks Apps proxy) ---
@@ -75,6 +83,15 @@ def leaderboard():
 @app.get("/api/stats")
 def stats():
     return db.get_stats()
+
+
+@app.post("/api/genie/ask")
+def genie_ask(req: GenieRequest):
+    try:
+        return genie.ask(req.question, req.conversation_id)
+    except Exception as e:
+        logger.error(f"Genie ask failed: {e}")
+        return {"error": "Não foi possível consultar o Genie. Tente novamente."}
 
 
 # --- Static files ---

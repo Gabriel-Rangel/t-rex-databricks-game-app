@@ -515,7 +515,7 @@ class TRexGame {
       ctx.fillStyle = fg;
       ctx.font = '14px "Press Start 2P", monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('Press SPACE to start', this.W / 2, this.H / 2 - 20);
+      ctx.fillText('Pressione ESPAÇO', this.W / 2, this.H / 2 - 20);
     }
 
     // Game over text
@@ -523,9 +523,9 @@ class TRexGame {
       ctx.fillStyle = fg;
       ctx.font = '18px "Press Start 2P", monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('GAME OVER', this.W / 2, this.H / 2 - 20);
+      ctx.fillText('FIM DE JOGO', this.W / 2, this.H / 2 - 20);
       ctx.font = '11px "Press Start 2P", monospace';
-      ctx.fillText('Submitting score...', this.W / 2, this.H / 2 + 10);
+      ctx.fillText('Enviando pontuação...', this.W / 2, this.H / 2 + 10);
     }
   }
 }

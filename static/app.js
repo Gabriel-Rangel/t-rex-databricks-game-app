@@ -34,9 +34,9 @@ async function api(method, path, body = null) {
 async function loadStats() {
   try {
     const s = await api('GET', '/api/stats');
-    document.getElementById('stat-players').textContent = `${s.total_players} players`;
-    document.getElementById('stat-games').textContent = `${s.total_games} games`;
-    document.getElementById('stat-winrate').textContent = `${s.win_rate}% win rate`;
+    document.getElementById('stat-players').textContent = `${s.total_players} jogadores`;
+    document.getElementById('stat-games').textContent = `${s.total_games} partidas`;
+    document.getElementById('stat-winrate').textContent = `${s.win_rate}% vitórias`;
   } catch (e) {
     // Stats are non-critical, silently fail
   }
@@ -53,7 +53,7 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
   if (!name || !email) return;
 
   const btn = e.target.querySelector('button');
-  btn.textContent = 'LOADING...';
+  btn.textContent = 'CARREGANDO...';
   btn.disabled = true;
 
   try {
@@ -62,8 +62,8 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
     state.playerName = data.name;
     startGame();
   } catch (err) {
-    alert('Registration failed. Please try again.');
-    btn.textContent = 'START GAME';
+    alert('Falha no cadastro. Tente novamente.');
+    btn.textContent = 'INICIAR JOGO';
     btn.disabled = false;
   }
 });
@@ -71,7 +71,7 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
 // ── Game ───────────────────────────────────────────────────────
 function startGame() {
   showScreen('game');
-  document.getElementById('player-label').textContent = `Player: ${state.playerName}`;
+  document.getElementById('player-label').textContent = `Jogador: ${state.playerName}`;
 
   const canvas = document.getElementById('game-canvas');
   if (gameInstance) gameInstance.destroy();
@@ -235,11 +235,11 @@ function showResults(result) {
   commentary.textContent = result.commentary;
 
   if (result.human_won) {
-    banner.textContent = 'YOU WIN!';
+    banner.textContent = 'VOCÊ VENCEU!';
     banner.className = 'result-banner win';
     swag.classList.remove('hidden');
   } else {
-    banner.textContent = 'AI WINS!';
+    banner.textContent = 'A IA VENCEU!';
     banner.className = 'result-banner lose';
     swag.classList.add('hidden');
   }
@@ -286,7 +286,7 @@ function renderLeaderboard(entries) {
     if (entry.name === state.playerName) tr.classList.add('highlight');
 
     const resultClass = entry.human_won ? 'badge-win' : 'badge-lose';
-    const resultText = entry.human_won ? 'WON' : 'LOST';
+    const resultText = entry.human_won ? 'GANHOU' : 'PERDEU';
 
     tr.innerHTML = `
       <td>${i + 1}</td>
@@ -319,7 +319,7 @@ function resetForNextPlayer() {
   state = { playerId: null, playerName: '', currentScore: 0 };
   document.getElementById('register-form').reset();
   const btn = document.getElementById('register-form').querySelector('button');
-  btn.textContent = 'START GAME';
+  btn.textContent = 'INICIAR JOGO';
   btn.disabled = false;
   showScreen('register');
   loadStats();

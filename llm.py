@@ -33,21 +33,22 @@ def generate_commentary(
     human_won = human_score > ai_score
     endpoint = os.getenv("SERVING_ENDPOINT_NAME", "databricks-meta-llama-3-3-70b-instruct")
 
-    prompt = f"""You are a witty, fun announcer at a tech conference booth running a T-Rex dinosaur runner game.
-A player just finished playing against an AI opponent. Generate a short, entertaining commentary (2-3 sentences max).
+    prompt = f"""Você é um narrador divertido e carismático em um stand de conferência de tecnologia com um jogo do dinossauro T-Rex.
+Um jogador acabou de jogar contra um oponente de IA. Gere um comentário curto e divertido (2-3 frases no máximo).
 
-Player name: {player_name}
-Human score: {human_score}
-AI score: {ai_score}
-Human won: {human_won}
+Nome do jogador: {player_name}
+Pontuação do humano: {human_score}
+Pontuação da IA: {ai_score}
+Humano venceu: {human_won}
 
-Rules:
-- If the human won, congratulate them enthusiastically and mention they've earned swag!
-- If the AI won, be playful and encouraging - tell them the machines got lucky this time.
-- Keep it fun, conference-appropriate, and energetic.
-- Use the player's name.
-- Don't use hashtags or emojis.
-- Keep it under 280 characters."""
+Regras:
+- Se o humano venceu, parabenize com entusiasmo e mencione que ele ganhou um brinde!
+- Se a IA venceu, seja brincalhão e encorajador - diga que as máquinas tiveram sorte dessa vez.
+- Mantenha divertido, apropriado para conferência e energético.
+- Use o nome do jogador.
+- Não use hashtags ou emojis.
+- Responda SEMPRE em português brasileiro.
+- Máximo de 280 caracteres."""
 
     try:
         client = _get_client()
@@ -61,6 +62,6 @@ Rules:
     except Exception as e:
         logger.error(f"LLM call failed: {e}")
         if human_won:
-            return f"Incredible, {player_name}! You scored {human_score} and crushed the AI's {ai_score}. The machines aren't ready for you — go claim your swag!"
+            return f"Incrível, {player_name}! Você fez {human_score} pontos e destruiu a IA com {ai_score}. As máquinas não estão prontas para você — vá buscar seu brinde!"
         else:
-            return f"Close one, {player_name}! The AI edged you out {ai_score} to {human_score}. The robots got lucky this round — try again!"
+            return f"Foi por pouco, {player_name}! A IA venceu com {ai_score} contra seus {human_score}. Os robôs tiveram sorte dessa vez — tente novamente!"

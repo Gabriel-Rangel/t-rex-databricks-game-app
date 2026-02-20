@@ -1,31 +1,30 @@
-# T-Rex Runner - Databricks Conference Booth App
+# T-Rex Runner - App para Stand de Conferência Databricks
 
-A Chrome T-Rex runner game built as a Databricks App for conference booths (Selbetti). Players register, play the game, then an AI "plays" and an LLM provides trash-talk commentary comparing scores. Beat the AI and win swag. A live leaderboard ranks all players.
+Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para stands de conferência (Selbetti). Os jogadores se cadastram, jogam o jogo, depois uma IA "joga" e um LLM gera comentários comparando as pontuações. Vença a IA e ganhe um brinde! Um ranking ao vivo classifica todos os jogadores.
 
-## Databricks Features Showcased
+## Funcionalidades Databricks Demonstradas
 
-| Feature | Usage |
-|---------|-------|
-| **Databricks Apps** | Hosts the full-stack web application (FastAPI + static files) |
-| **Lakebase Provisioned** | Low-latency PostgreSQL storage for players and game sessions |
-| **Model Serving (FMAPI)** | Foundation Model API (Llama 3.3 70B) generates AI commentary |
-| **Unity Catalog** | Catalog `selbetti`, schema `analytics` for data governance |
-| **Delta Table Sync** | Reverse ETL: Lakebase -> Delta table for Spark/SQL analytics |
-| **Genie Space** | Natural language exploration of game analytics data |
+| Funcionalidade | Uso |
+|----------------|-----|
+| **Databricks Apps** | Hospeda a aplicação web full-stack (FastAPI + arquivos estáticos) |
+| **Lakebase Provisioned** | Armazenamento PostgreSQL de baixa latência para jogadores e sessões |
+| **Model Serving (FMAPI)** | Foundation Model API (Llama 3.3 70B) gera comentários da IA |
+| **Unity Catalog** | Catálogo `selbetti` vinculado ao Lakebase para governança de dados |
+| **Genie Space** | Exploração em linguagem natural dos dados do jogo diretamente do Lakebase |
 
-## Architecture
+## Arquitetura
 
 ```
 +------------------------------------------------------+
 |             Databricks App (FastAPI)                  |
 |                                                      |
-|  Static Files (HTML/JS/CSS)                          |
-|  +-- Registration Screen                             |
-|  +-- T-Rex Game (HTML5 Canvas)                       |
-|  +-- AI vs Human Comparison + LLM Commentary         |
-|  +-- Leaderboard                                     |
+|  Arquivos Estáticos (HTML/JS/CSS)                    |
+|  +-- Tela de Cadastro                                |
+|  +-- Jogo T-Rex (HTML5 Canvas)                       |
+|  +-- Comparação IA vs Humano + Comentário LLM        |
+|  +-- Ranking                                         |
 |                                                      |
-|  API Endpoints                                       |
+|  Endpoints da API                                    |
 |  +-- POST /api/register                              |
 |  +-- POST /api/score                                 |
 |  +-- GET  /api/leaderboard                           |
@@ -33,118 +32,116 @@ A Chrome T-Rex runner game built as a Databricks App for conference booths (Selb
 +------------------------------------------------------+
 |  Lakebase         |  Model Serving  |  Unity Catalog |
 |  (PostgreSQL)     |  (LLM - FMAPI) |  selbetti.*    |
-|  - players        |  - AI score     |                |
-|  - game_sessions  |  - commentary   |  Delta Table   |
-|                   |                 |  (synced from  |
-|                   |                 |   Lakebase)    |
+|  - players        |  - pontuação IA |                |
+|  - game_sessions  |  - comentários  |  Genie Space   |
+|                   |                 |  (consultas    |
+|                   |                 |   em linguagem |
+|                   |                 |   natural)     |
 +------------------------------------------------------+
 ```
 
-## User Flow
+## Fluxo do Usuário
 
-1. **Registration** - Player enters name, email, and company
-2. **Game** - T-Rex runner game (jump over cacti, duck under birds)
-3. **Score Submit** - Score sent to API, stored in Lakebase
-4. **AI Play** - Fast-forward animation of AI "playing", LLM generates score + trash talk
-5. **Result** - Human vs AI side-by-side comparison, swag banner if human wins
-6. **Leaderboard** - Ranking of all players (auto-refreshes)
-7. **Back to Registration** - Ready for the next booth visitor
+1. **Cadastro** - Jogador insere nome, email e empresa
+2. **Jogo** - Jogo do T-Rex runner (pular cactos, abaixar de pássaros)
+3. **Envio de Pontuação** - Pontuação enviada para a API, armazenada no Lakebase
+4. **IA Joga** - Animação rápida da IA "jogando", LLM gera pontuação + comentário
+5. **Resultado** - Comparação lado a lado Humano vs IA, banner de brinde se o humano vencer
+6. **Ranking** - Classificação de todos os jogadores (atualiza automaticamente)
+7. **Volta ao Cadastro** - Pronto para o próximo visitante do stand
 
-## Project Structure
+## Estrutura do Projeto
 
 ```
 t-rex-app/
-+-- app.py              # FastAPI server, API endpoints, static file serving
-+-- app.yaml            # Databricks App runtime configuration
-+-- requirements.txt    # Python dependencies (psycopg2, openai, databricks-sdk)
-+-- db.py               # Lakebase connection (OAuth tokens), schema management, CRUD
-+-- llm.py              # Foundation Model API integration (AI score + commentary)
-+-- README.md           # This file
++-- app.py              # Servidor FastAPI, endpoints da API, servir arquivos estáticos
++-- app.yaml            # Configuração de runtime do Databricks App
++-- requirements.txt    # Dependências Python (psycopg2, openai, databricks-sdk)
++-- db.py               # Conexão com Lakebase (tokens OAuth), gerenciamento de schema, CRUD
++-- llm.py              # Integração com Foundation Model API (pontuação IA + comentários)
++-- README.md           # Este arquivo
 +-- static/
-    +-- index.html      # Single-page app (5 screens)
-    +-- style.css       # Retro pixel-art dark theme (Press Start 2P font)
-    +-- game.js         # T-Rex game engine (HTML5 Canvas, pixel-art sprites)
-    +-- app.js          # App logic (screen transitions, API calls, AI animation)
+    +-- index.html      # Single-page app (5 telas)
+    +-- style.css       # Tema escuro retro pixel-art (fonte Press Start 2P)
+    +-- game.js         # Motor do jogo T-Rex (HTML5 Canvas, sprites pixel-art)
+    +-- app.js          # Lógica do app (transições de tela, chamadas API, animação IA)
 ```
 
-### Backend Files
+### Arquivos Backend
 
-| File | Description |
-|------|-------------|
-| `app.py` | FastAPI server. Mounts static files, defines API endpoints, initializes DB on startup. Includes `/metrics` health check required by the Databricks Apps proxy. |
-| `db.py` | Lakebase (PostgreSQL) connection layer. Uses `databricks-sdk` to generate OAuth tokens for the app's service principal. Auto-creates `players` and `game_sessions` tables on startup. Includes automatic token refresh on connection failure. |
-| `llm.py` | Foundation Model API integration via OpenAI-compatible client. Generates AI scores calibrated so humans win ~60% of the time. Calls Llama 3.3 70B for entertaining game commentary. Falls back to hardcoded messages if the LLM call fails. |
-| `app.yaml` | Databricks App runtime config. Runs `uvicorn` on port **8000**. Defines environment variables for the serving endpoint and Lakebase connection. |
+| Arquivo | Descrição |
+|---------|-----------|
+| `app.py` | Servidor FastAPI. Monta arquivos estáticos, define endpoints da API, inicializa banco na startup. Inclui endpoint `/metrics` de health check exigido pelo proxy do Databricks Apps. |
+| `db.py` | Camada de conexão com Lakebase (PostgreSQL). Usa `databricks-sdk` para gerar tokens OAuth para o service principal do app. Cria automaticamente as tabelas `players` e `game_sessions` na startup. Inclui refresh automático de token em caso de falha de conexão. |
+| `llm.py` | Integração com Foundation Model API via cliente compatível com OpenAI. Gera pontuações da IA calibradas para humanos vencerem ~60% das vezes. Chama Llama 3.3 70B para comentários divertidos do jogo em português. Fallback para mensagens fixas se a chamada LLM falhar. |
+| `app.yaml` | Configuração de runtime do Databricks App. Roda `uvicorn` na porta **8000**. Define variáveis de ambiente para o serving endpoint e conexão Lakebase. |
 
-### Frontend Files
+### Arquivos Frontend
 
-| File | Description |
-|------|-------------|
-| `index.html` | SPA with 5 screen containers: Register, Game, AI Playing, Results, Leaderboard. |
-| `style.css` | Dark theme with retro pixel-art aesthetic. Uses `Press Start 2P` Google Font. Responsive for both booth displays and mobile. |
-| `game.js` | Complete T-Rex runner clone. Pixel-art sprites rendered on HTML5 Canvas. Dino runs, jumps (Space/Up), and ducks (Down). Obstacles: cacti (3 types) and birds. Progressive speed increase, day/night cycle, score tracking. |
-| `app.js` | Screen management, registration form handling, API calls, AI "playing" animation, score comparison with count-up animation, leaderboard rendering with auto-refresh. |
+| Arquivo | Descrição |
+|---------|-----------|
+| `index.html` | SPA com 5 telas: Cadastro, Jogo, IA Jogando, Resultados, Ranking. |
+| `style.css` | Tema escuro com estética retro pixel-art. Usa fonte `Press Start 2P` do Google Fonts. Responsivo para displays de stand e mobile. |
+| `game.js` | Clone completo do T-Rex runner. Sprites pixel-art renderizados em HTML5 Canvas. Dino corre, pula (Espaço/Cima) e abaixa (Baixo). Obstáculos: cactos (3 tipos) e pássaros. Aumento progressivo de velocidade, ciclo dia/noite, contagem de pontuação. |
+| `app.js` | Gerenciamento de telas, formulário de cadastro, chamadas API, animação da IA "jogando", animação de contagem de pontuação, renderização do ranking com auto-refresh. |
 
-## Prerequisites
+## Pré-requisitos
 
-- Databricks workspace with:
-  - **Databricks CLI** v0.240+ authenticated (`databricks auth login`)
-  - **Lakebase Provisioned** enabled in the workspace
-  - **Foundation Model API** access (pay-per-token endpoints)
-- Python 3.11+ (for local testing)
+- Workspace Databricks com:
+  - **Databricks CLI** v0.240+ autenticado (`databricks auth login`)
+  - **Lakebase Provisioned** habilitado no workspace
+  - **Foundation Model API** com acesso (endpoints pay-per-token)
+- Python 3.11+ (para testes locais)
 
-## Deployment Guide
+## Guia de Deploy
 
-### Step 1: Create Unity Catalog Resources
+### Passo 1: Criar Recursos no Unity Catalog
 
-```bash
-databricks catalogs create selbetti --comment "T-Rex Game Conference Booth"
-databricks schemas create analytics selbetti --comment "Game analytics schema"
-```
+Crie o catálogo `selbetti` e vincule-o à instância Lakebase (via Databricks UI: Catalog > Create Catalog > selecione "Lakebase database catalog" e vincule à instância).
 
-### Step 2: Create Lakebase Instance
+### Passo 2: Criar Instância Lakebase
 
 ```bash
 databricks database create-database-instance trex-game-db --capacity CU_1
 ```
 
-Wait for the instance to reach `AVAILABLE` state:
+Aguarde a instância atingir o estado `AVAILABLE`:
 
 ```bash
 databricks database get-database-instance trex-game-db
 ```
 
-Note the `read_write_dns` value from the output -- you'll need it for `app.yaml`.
+Anote o valor `read_write_dns` da saída — você precisará dele para o `app.yaml`.
 
-### Step 3: Update `app.yaml`
+### Passo 3: Atualizar `app.yaml`
 
-Edit `app.yaml` and set the `LAKEBASE_HOST` value to the DNS from Step 2:
+Edite `app.yaml` e defina o valor de `LAKEBASE_HOST` com o DNS do Passo 2:
 
 ```yaml
 env:
   - name: LAKEBASE_HOST
-    value: "<your-instance-dns-here>"
+    value: "<seu-dns-da-instância>"
 ```
 
-### Step 4: Create and Deploy the App
+### Passo 4: Criar e Fazer Deploy do App
 
 ```bash
-# Create the app
-databricks apps create t-rex-game --description "T-Rex Runner - Conference Booth"
+# Criar o app
+databricks apps create t-rex-game --description "T-Rex Runner - Stand de Conferência"
 
-# Sync source code to workspace
+# Sincronizar código fonte para o workspace
 databricks sync --full \
   --exclude "__pycache__" --exclude "*.pyc" \
-  . /Workspace/Users/<your-email>/apps/t-rex-game
+  . /Workspace/Users/<seu-email>/apps/t-rex-game
 
 # Deploy
 databricks apps deploy t-rex-game \
-  --source-code-path /Workspace/Users/<your-email>/apps/t-rex-game
+  --source-code-path /Workspace/Users/<seu-email>/apps/t-rex-game
 ```
 
-### Step 5: Add App Resources
+### Passo 5: Adicionar Recursos ao App
 
-Attach the Lakebase database and model serving endpoint to the app:
+Vincule o banco Lakebase e o endpoint de model serving ao app:
 
 ```bash
 databricks apps update t-rex-game --json '{
@@ -168,23 +165,23 @@ databricks apps update t-rex-game --json '{
 }'
 ```
 
-### Step 6: Grant Lakebase Permissions
+### Passo 6: Conceder Permissões no Lakebase
 
-The app's service principal needs `CREATE` permission on the `public` schema. Connect to the Lakebase instance as your user and run:
+O service principal do app precisa de permissão `CREATE` no schema `public`. Conecte-se à instância Lakebase como seu usuário e execute:
 
 ```sql
 GRANT CREATE ON SCHEMA public TO "<service-principal-client-id>";
 GRANT USAGE ON SCHEMA public TO "<service-principal-client-id>";
 ```
 
-You can find the `service_principal_client_id` in the output of `databricks apps get t-rex-game`.
+Você pode encontrar o `service_principal_client_id` na saída de `databricks apps get t-rex-game`.
 
-To connect to Lakebase from a local machine:
+Para conectar ao Lakebase de uma máquina local:
 
 ```python
 import psycopg2, subprocess, json
 
-# Generate OAuth token
+# Gerar token OAuth
 result = subprocess.run(
     ["databricks", "database", "generate-database-credential",
      "--json", '{"instance_names": ["trex-game-db"]}', "--output", "json"],
@@ -193,128 +190,132 @@ result = subprocess.run(
 token = json.loads(result.stdout)["token"]
 
 conn = psycopg2.connect(
-    host="<your-instance-dns>",
+    host="<seu-dns-da-instância>",
     database="databricks_postgres",
-    user="<your-email>",
+    user="<seu-email>",
     password=token,
     port=5432,
     sslmode="require",
 )
 ```
 
-### Step 7: Redeploy
+### Passo 7: Refazer Deploy
 
-After granting permissions, redeploy to trigger table creation:
+Após conceder permissões, refaça o deploy para acionar a criação das tabelas:
 
 ```bash
 databricks sync --full \
   --exclude "__pycache__" --exclude "*.pyc" \
-  . /Workspace/Users/<your-email>/apps/t-rex-game
+  . /Workspace/Users/<seu-email>/apps/t-rex-game
 
 databricks apps deploy t-rex-game \
-  --source-code-path /Workspace/Users/<your-email>/apps/t-rex-game
+  --source-code-path /Workspace/Users/<seu-email>/apps/t-rex-game
 ```
 
-### Step 8: Verify
+### Passo 8: Verificar
 
 ```bash
 databricks apps get t-rex-game
 ```
 
-The `app_status.state` should be `RUNNING`. Open the `url` from the output in your browser.
+O `app_status.state` deve ser `RUNNING`. Abra a `url` da saída no seu navegador.
 
-## Local Development
+## Desenvolvimento Local
 
-Run the app locally with full Databricks authentication:
+Execute o app localmente com autenticação Databricks completa:
 
 ```bash
 databricks apps run-local \
   --entry-point app.yaml \
   --env LAKEBASE_INSTANCE_NAME=trex-game-db \
-  --env LAKEBASE_HOST=<your-instance-dns> \
+  --env LAKEBASE_HOST=<seu-dns-da-instância> \
   --env LAKEBASE_DATABASE=databricks_postgres \
   --env LAKEBASE_PORT=5432 \
   --env SERVING_ENDPOINT_NAME=databricks-meta-llama-3-3-70b-instruct
 ```
 
-The app will be available at `http://localhost:8001`.
+O app estará disponível em `http://localhost:8001`.
 
-## Redeployment
+## Novo Deploy
 
-After making code changes:
+Após alterações no código:
 
 ```bash
 databricks sync --full \
   --exclude "__pycache__" --exclude "*.pyc" \
-  . /Workspace/Users/<your-email>/apps/t-rex-game
+  . /Workspace/Users/<seu-email>/apps/t-rex-game
 
 databricks apps deploy t-rex-game \
-  --source-code-path /Workspace/Users/<your-email>/apps/t-rex-game
+  --source-code-path /Workspace/Users/<seu-email>/apps/t-rex-game
 ```
 
-## API Reference
+## Referência da API
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | Serves the game SPA |
-| `/metrics` | GET | Health check (required by Databricks Apps proxy) |
-| `/api/register` | POST | Register a player. Body: `{"name", "email", "company"}` |
-| `/api/score` | POST | Submit score. Body: `{"player_id", "player_name", "score"}`. Returns AI score, commentary, and win result. |
-| `/api/leaderboard` | GET | Top 50 scores with player info |
-| `/api/stats` | GET | Total players, games, human win rate, best score |
+| Endpoint | Método | Descrição |
+|----------|--------|-----------|
+| `/` | GET | Serve o SPA do jogo |
+| `/metrics` | GET | Health check (exigido pelo proxy do Databricks Apps) |
+| `/api/register` | POST | Cadastrar jogador. Body: `{"name", "email", "company"}` |
+| `/api/score` | POST | Enviar pontuação. Body: `{"player_id", "player_name", "score"}`. Retorna pontuação da IA, comentário e resultado. |
+| `/api/leaderboard` | GET | Top 50 pontuações com informações dos jogadores |
+| `/api/stats` | GET | Total de jogadores, partidas, taxa de vitória dos humanos, melhor pontuação |
 
-## Database Schema
+## Schema do Banco de Dados
 
 ### `players`
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL PK | Auto-increment ID |
-| name | VARCHAR(100) | Player name |
-| email | VARCHAR(255) | Player email |
-| company | VARCHAR(200) | Company name |
-| created_at | TIMESTAMP | Registration time |
+| Coluna | Tipo | Descrição |
+|--------|------|-----------|
+| id | SERIAL PK | ID auto-incremento |
+| name | VARCHAR(100) | Nome do jogador |
+| email | VARCHAR(255) | Email do jogador |
+| company | VARCHAR(200) | Nome da empresa |
+| created_at | TIMESTAMP | Data/hora do cadastro |
 
 ### `game_sessions`
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL PK | Auto-increment ID |
-| player_id | INTEGER FK | References players(id) |
-| human_score | INTEGER | Player's game score |
-| ai_score | INTEGER | AI-generated score |
-| human_won | BOOLEAN | Whether the player beat the AI |
-| llm_commentary | TEXT | LLM-generated trash talk / congratulations |
-| created_at | TIMESTAMP | Game session time |
+| Coluna | Tipo | Descrição |
+|--------|------|-----------|
+| id | SERIAL PK | ID auto-incremento |
+| player_id | INTEGER FK | Referência para players(id) |
+| human_score | INTEGER | Pontuação do jogador |
+| ai_score | INTEGER | Pontuação gerada pela IA |
+| human_won | BOOLEAN | Se o jogador venceu a IA |
+| llm_commentary | TEXT | Comentário gerado pelo LLM |
+| created_at | TIMESTAMP | Data/hora da sessão |
 
-## Optional: Delta Table Sync and Genie Space
+## Genie Space
 
-### Delta Table Sync (Reverse ETL)
+Um Genie Space **"T-Rex Game Analytics"** está configurado para consultar as tabelas do Lakebase diretamente via Unity Catalog (`selbetti.public.players` e `selbetti.public.game_sessions`). Isso permite exploração dos dados do jogo em linguagem natural.
 
-Sync game data from Lakebase to a Delta table for Spark/SQL analytics:
+### Configuração
 
+O Genie Space é criado via REST API:
+
+```bash
+# Criar o Genie Space (tabelas devem estar ordenadas alfabeticamente por identifier)
+databricks api post /api/2.0/genie/spaces --json '{
+  "title": "T-Rex Game Analytics",
+  "description": "Exploração em linguagem natural dos dados do jogo T-Rex.",
+  "warehouse_id": "<id-do-sql-warehouse>",
+  "serialized_space": "{\"version\": 2, \"data_sources\": {\"tables\": [{\"identifier\": \"selbetti.public.game_sessions\"}, {\"identifier\": \"selbetti.public.players\"}]}}"
+}'
 ```
-Source: trex-game-db / databricks_postgres / public.game_sessions
-Target: selbetti.analytics.game_sessions
-Policy: TRIGGERED
-```
 
-### Genie Space
+### Perguntas de Exemplo
 
-Create a Genie Space "T-Rex Game Analytics" on `selbetti.analytics.game_sessions` with sample questions:
+- "Quem tem a maior pontuação?"
+- "Qual a taxa de vitória dos humanos contra a IA?"
+- "Quantas pessoas jogaram hoje?"
+- "Mostre os top 10 jogadores por pontuação"
+- "Qual empresa tem mais jogadores?"
 
-- "Who has the highest score?"
-- "What's the human win rate against the AI?"
-- "How many people played today?"
-- "Show me the top 10 players by score"
-- "What company has the most players?"
+## Notas Importantes de Implementação
 
-## Key Implementation Notes
-
-- **Port 8000**: Databricks Apps expect the app process on port 8000 (not 8080).
-- **`/metrics` endpoint**: Required by the Databricks Apps proxy for health checks. Without it, the proxy returns 502.
-- **Lakebase OAuth**: The app's service principal generates OAuth tokens via `databricks-sdk`. Tokens are cached and auto-refreshed on connection failure.
-- **`databricks-sdk>=0.81.0`**: Required in `requirements.txt` for the `WorkspaceClient.database` API. The pre-installed version in the Apps runtime is too old.
-- **Schema permissions**: The service principal must be explicitly granted `CREATE` + `USAGE` on the `public` schema in Lakebase.
-- **LLM fallback**: If the Foundation Model API call fails, hardcoded commentary is returned so the game flow is never broken.
-- **AI score calibration**: AI scores use `human_score * uniform(0.4, 1.4)` so humans win approximately 60% of the time.
+- **Porta 8000**: Databricks Apps espera o processo do app na porta 8000 (não 8080).
+- **Endpoint `/metrics`**: Exigido pelo proxy do Databricks Apps para health checks. Sem ele, o proxy retorna 502.
+- **OAuth do Lakebase**: O service principal do app gera tokens OAuth via `databricks-sdk`. Tokens são cacheados e atualizados automaticamente em caso de falha de conexão.
+- **`databricks-sdk>=0.81.0`**: Necessário no `requirements.txt` para a API `WorkspaceClient.database`. A versão pré-instalada no runtime do Apps é muito antiga.
+- **Permissões do schema**: O service principal precisa receber explicitamente `CREATE` + `USAGE` no schema `public` do Lakebase.
+- **Fallback do LLM**: Se a chamada à Foundation Model API falhar, comentários fixos em português são retornados para que o fluxo do jogo nunca seja interrompido.
+- **Calibração da pontuação IA**: Pontuações da IA usam `human_score * uniform(0.4, 1.4)` para que humanos vençam aproximadamente 60% das vezes.

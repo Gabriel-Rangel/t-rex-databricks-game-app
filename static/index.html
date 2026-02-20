@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>T-Rex Runner | Selbetti Booth</title>
+  <title>T-Rex Runner | Stand Selbetti</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/style.css" />
@@ -29,29 +29,29 @@
     █   █
         </pre>
         <h1>T-REX<br/>RUNNER</h1>
-        <p class="subtitle">Selbetti Booth Challenge</p>
+        <p class="subtitle">Desafio do Stand Selbetti</p>
       </div>
 
       <form id="register-form" autocomplete="off">
         <div class="form-group">
-          <label for="name">Your Name</label>
-          <input type="text" id="name" name="name" required placeholder="John Doe" />
+          <label for="name">Seu Nome</label>
+          <input type="text" id="name" name="name" required placeholder="Maria Silva" />
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" required placeholder="john@company.com" />
+          <input type="email" id="email" name="email" required placeholder="maria@empresa.com" />
         </div>
         <div class="form-group">
-          <label for="company">Company</label>
-          <input type="text" id="company" name="company" placeholder="Acme Corp" />
+          <label for="company">Empresa</label>
+          <input type="text" id="company" name="company" placeholder="Empresa S.A." />
         </div>
-        <button type="submit" class="btn btn-primary">START GAME</button>
+        <button type="submit" class="btn btn-primary">INICIAR JOGO</button>
       </form>
 
       <div id="stats-bar" class="stats-bar">
-        <span id="stat-players">0 players</span>
-        <span id="stat-games">0 games</span>
-        <span id="stat-winrate">0% win rate</span>
+        <span id="stat-players">0 jogadores</span>
+        <span id="stat-games">0 partidas</span>
+        <span id="stat-winrate">0% vitórias</span>
       </div>
     </div>
   </div>
@@ -61,7 +61,7 @@
     <div class="container game-container">
       <div class="game-header">
         <span id="player-label" class="player-label"></span>
-        <span class="game-hint">SPACE = Jump &nbsp; DOWN = Duck</span>
+        <span class="game-hint">ESPAÇO = Pular &nbsp; BAIXO = Abaixar</span>
       </div>
       <canvas id="game-canvas"></canvas>
     </div>
@@ -70,12 +70,12 @@
   <!-- ═══ Screen 3: AI Playing ═══ -->
   <div id="screen-ai" class="screen">
     <div class="container ai-container">
-      <h2>AI IS PLAYING...</h2>
+      <h2>A IA ESTÁ JOGANDO...</h2>
       <div class="ai-game-visual">
         <canvas id="ai-canvas" width="800" height="200"></canvas>
       </div>
       <div class="ai-score-counter">
-        <span>AI SCORE: </span><span id="ai-score-display">00000</span>
+        <span>PONTUAÇÃO IA: </span><span id="ai-score-display">00000</span>
       </div>
       <div class="ai-loading-bar">
         <div id="ai-progress" class="ai-progress"></div>
@@ -90,7 +90,7 @@
 
       <div class="score-comparison">
         <div class="score-card human">
-          <div class="score-label">YOU</div>
+          <div class="score-label">VOCÊ</div>
           <div id="result-human-score" class="score-value">0</div>
         </div>
         <div class="vs">VS</div>
@@ -103,12 +103,12 @@
       <div id="llm-commentary" class="commentary"></div>
 
       <div id="swag-banner" class="swag-banner hidden">
-        YOU WON SWAG! Ask the booth staff to claim your prize.
+        VOCÊ GANHOU UM BRINDE! Procure a equipe do stand para retirar seu prêmio.
       </div>
 
       <div class="result-actions">
-        <button id="btn-leaderboard" class="btn btn-secondary">VIEW LEADERBOARD</button>
-        <button id="btn-play-again" class="btn btn-primary">NEXT PLAYER</button>
+        <button id="btn-leaderboard" class="btn btn-secondary">VER RANKING</button>
+        <button id="btn-play-again" class="btn btn-primary">PRÓXIMO JOGADOR</button>
       </div>
     </div>
   </div>
@@ -116,23 +116,23 @@
   <!-- ═══ Screen 5: Leaderboard ═══ -->
   <div id="screen-leaderboard" class="screen">
     <div class="container leaderboard-container">
-      <h2>LEADERBOARD</h2>
+      <h2>RANKING</h2>
       <div class="leaderboard-scroll">
         <table id="leaderboard-table">
           <thead>
             <tr>
               <th>#</th>
-              <th>Player</th>
-              <th>Company</th>
-              <th>Score</th>
-              <th>vs AI</th>
-              <th>Result</th>
+              <th>Jogador</th>
+              <th>Empresa</th>
+              <th>Pontos</th>
+              <th>vs IA</th>
+              <th>Resultado</th>
             </tr>
           </thead>
           <tbody id="leaderboard-body"></tbody>
         </table>
       </div>
-      <button id="btn-back-register" class="btn btn-primary">NEXT PLAYER</button>
+      <button id="btn-back-register" class="btn btn-primary">PRÓXIMO JOGADOR</button>
     </div>
   </div>
 
