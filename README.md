@@ -1,6 +1,6 @@
 # T-Rex Runner - App para Stand Databricks
 
-Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para stands de conferência. Os jogadores se cadastram, jogam o jogo, depois uma IA "joga" e um LLM gera comentários comparando as pontuações. Vença a IA e ganhe um brinde! Um ranking ao vivo classifica todos os jogadores, com um chat integrado do Genie para explorar os dados em linguagem natural.
+Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para stands de conferência. Os jogadores se cadastram, jogam contra uma IA alimentada por Model Serving e competem por um lugar no ranking. Vença a IA e ganhe um brinde! Inclui chat integrado do Genie para explorar os dados em linguagem natural.
 
 ## Funcionalidades Databricks Demonstradas
 
@@ -8,7 +8,7 @@ Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para
 |----------------|-----|
 | **Databricks Apps** | Hospeda a aplicação web full-stack (FastAPI + arquivos estáticos) |
 | **Lakebase Provisioned** | Armazenamento PostgreSQL de baixa latência para jogadores e sessões |
-| **Model Serving (FMAPI)** | Foundation Model API (Llama 3.3 70B) gera comentários da IA |
+| **Model Serving (FMAPI)** | Foundation Model API (Llama 3.3 70B) alimenta o oponente de IA do jogo |
 | **Unity Catalog** | Catálogo `selbetti` vinculado ao Lakebase para governança de dados |
 | **Genie Space** | Exploração em linguagem natural dos dados do jogo diretamente do Lakebase |
 
@@ -21,7 +21,7 @@ Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para
 |  Arquivos Estáticos (HTML/JS/CSS)                    |
 |  +-- Tela de Cadastro                                |
 |  +-- Jogo T-Rex (HTML5 Canvas)                       |
-|  +-- Comparação IA vs Humano + Comentário LLM        |
+|  +-- Comparação IA vs Humano (Model Serving)          |
 |  +-- Ranking                                         |
 |                                                      |
 |  Endpoints da API                                    |
@@ -32,8 +32,8 @@ Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para
 +------------------------------------------------------+
 |  Lakebase         |  Model Serving  |  Unity Catalog |
 |  (PostgreSQL)     |  (LLM - FMAPI) |  selbetti.*    |
-|  - players        |  - pontuação IA |                |
-|  - game_sessions  |  - comentários  |  Genie Space   |
+|  - players        |  - oponente IA  |                |
+|  - game_sessions  |  - análise      |  Genie Space   |
 |                   |                 |  (consultas    |
 |                   |                 |   em linguagem |
 |                   |                 |   natural)     |
@@ -45,8 +45,8 @@ Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para
 1. **Cadastro** - Jogador insere nome, email e empresa
 2. **Jogo** - Jogo do T-Rex runner (pular cactos, abaixar de pássaros)
 3. **Envio de Pontuação** - Pontuação enviada para a API, armazenada no Lakebase
-4. **IA Joga** - Animação rápida da IA "jogando", LLM gera pontuação + comentário
-5. **Resultado** - Comparação lado a lado Humano vs IA, banner de brinde se o humano vencer
+4. **IA Joga** - A IA joga sua rodada usando Model Serving
+5. **Resultado** - Comparação lado a lado Humano vs IA com análise gerada por LLM, banner de brinde se o humano vencer
 6. **Ranking** - Classificação de todos os jogadores (atualiza automaticamente) + chat Genie para explorar dados
 7. **Volta ao Cadastro** - Pronto para o próximo visitante do stand
 
@@ -58,7 +58,7 @@ t-rex-app/
 +-- app.yaml            # Configuração de runtime do Databricks App
 +-- requirements.txt    # Dependências Python (psycopg2, openai, databricks-sdk)
 +-- db.py               # Conexão com Lakebase (tokens OAuth), gerenciamento de schema, CRUD
-+-- llm.py              # Integração com Foundation Model API (pontuação IA + comentários)
++-- llm.py              # Integração com Foundation Model API (oponente IA + análise)
 +-- genie.py            # Integração com Genie Conversation API (chat de linguagem natural)
 +-- README.md           # Este arquivo
 +-- static/
@@ -74,7 +74,7 @@ t-rex-app/
 |---------|-----------|
 | `app.py` | Servidor FastAPI. Monta arquivos estáticos, define endpoints da API, inicializa banco na startup. Inclui endpoint `/metrics` de health check exigido pelo proxy do Databricks Apps. |
 | `db.py` | Camada de conexão com Lakebase (PostgreSQL). Usa `databricks-sdk` para gerar tokens OAuth para o service principal do app. Cria automaticamente as tabelas `players` e `game_sessions` na startup. Inclui refresh automático de token em caso de falha de conexão. |
-| `llm.py` | Integração com Foundation Model API via cliente compatível com OpenAI. Gera pontuações da IA calibradas para humanos vencerem ~30% das vezes. Chama Llama 3.3 70B para comentários divertidos do jogo em português. Fallback para mensagens fixas se a chamada LLM falhar. |
+| `llm.py` | Integração com Foundation Model API via cliente compatível com OpenAI. Alimenta o oponente de IA do jogo — gera pontuações calibradas e análises personalizadas das partidas usando Llama 3.3 70B. Inclui fallback automático para garantir fluxo contínuo do jogo. |
 | `genie.py` | Integração com Genie Conversation API via `databricks-sdk`. Permite que jogadores façam perguntas em linguagem natural sobre os dados do jogo diretamente no chat popup do ranking. |
 | `app.yaml` | Configuração de runtime do Databricks App. Roda `uvicorn` na porta **8000**. Define variáveis de ambiente para o serving endpoint, conexão Lakebase e Genie Space ID. |
 
@@ -258,7 +258,7 @@ databricks apps deploy t-rex-game \
 | `/` | GET | Serve o SPA do jogo |
 | `/metrics` | GET | Health check (exigido pelo proxy do Databricks Apps) |
 | `/api/register` | POST | Cadastrar jogador. Body: `{"name", "email", "company"}` |
-| `/api/score` | POST | Enviar pontuação. Body: `{"player_id", "player_name", "score"}`. Retorna pontuação da IA, comentário e resultado. |
+| `/api/score` | POST | Enviar pontuação. Body: `{"player_id", "player_name", "score"}`. Aciona o Model Serving para a rodada da IA e retorna resultado. |
 | `/api/leaderboard` | GET | Top 50 pontuações com informações dos jogadores |
 | `/api/stats` | GET | Total de jogadores, partidas, taxa de vitória dos humanos, melhor pontuação |
 | `/api/genie/ask` | POST | Pergunta ao Genie. Body: `{"question", "conversation_id?"}`. Retorna texto, SQL, colunas e dados. |
@@ -284,7 +284,7 @@ databricks apps deploy t-rex-game \
 | human_score | INTEGER | Pontuação do jogador |
 | ai_score | INTEGER | Pontuação gerada pela IA |
 | human_won | BOOLEAN | Se o jogador venceu a IA |
-| llm_commentary | TEXT | Comentário gerado pelo LLM |
+| llm_commentary | TEXT | Análise da partida gerada pelo LLM |
 | created_at | TIMESTAMP | Data/hora da sessão |
 
 ## Genie Space
@@ -320,6 +320,6 @@ databricks api post /api/2.0/genie/spaces --json '{
 - **OAuth do Lakebase**: O service principal do app gera tokens OAuth via `databricks-sdk`. Tokens são cacheados e atualizados automaticamente em caso de falha de conexão.
 - **`databricks-sdk>=0.81.0`**: Necessário no `requirements.txt` para a API `WorkspaceClient.database`. A versão pré-instalada no runtime do Apps é muito antiga.
 - **Permissões do schema**: O service principal precisa receber explicitamente `CREATE` + `USAGE` no schema `public` do Lakebase.
-- **Fallback do LLM**: Se a chamada à Foundation Model API falhar, comentários fixos em português são retornados para que o fluxo do jogo nunca seja interrompido.
+- **Fallback do LLM**: Se a chamada à Foundation Model API falhar, respostas fixas em português são retornadas para que o fluxo do jogo nunca seja interrompido.
 - **Calibração da pontuação IA**: Pontuações da IA usam `human_score * uniform(0.8, 1.6) + randint(-10, 30)` para que humanos vençam aproximadamente 30% das vezes.
 - **Chat Genie**: Popup de chat integrado na tela de ranking permite perguntas em linguagem natural sobre os dados do jogo. Usa a Genie Conversation API (`w.genie.start_conversation_and_wait`).
