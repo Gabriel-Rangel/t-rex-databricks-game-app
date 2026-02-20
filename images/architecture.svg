@@ -219,7 +219,7 @@
     <text x="52" y="42" fill="#888" font-size="8.5">Governança de Dados</text>
     <g transform="translate(16, 62)">
       <rect width="168" height="16" rx="3" fill="#FFFBEB"/>
-      <text x="84" y="11" text-anchor="middle" fill="#D97706" font-size="7.5">Catálogo selbetti</text>
+      <text x="84" y="11" text-anchor="middle" fill="#D97706" font-size="7.5">Lakebase Database Catalog</text>
     </g>
   </g>
 

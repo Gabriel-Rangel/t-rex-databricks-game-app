@@ -21,7 +21,7 @@ def _refresh_credentials():
     _cached_username = w.current_user.me().user_name
     cred = w.database.generate_database_credential(
         request_id=str(uuid.uuid4()),
-        instance_names=[os.getenv("LAKEBASE_INSTANCE_NAME", "trex-game-db")],
+        instance_names=[os.getenv("LAKEBASE_INSTANCE_NAME")],
     )
     _cached_token = cred.token
     logger.info("Lakebase OAuth token refreshed.")

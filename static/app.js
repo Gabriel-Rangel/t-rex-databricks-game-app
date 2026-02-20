@@ -308,10 +308,14 @@ function escapeHtml(str) {
 
 // ── Navigation Buttons ─────────────────────────────────────────
 document.getElementById('btn-play-again').addEventListener('click', () => {
-  resetForNextPlayer();
+  showScreen('architecture');
 });
 
 document.getElementById('btn-back-register').addEventListener('click', () => {
+  showScreen('architecture');
+});
+
+document.getElementById('btn-next-player').addEventListener('click', () => {
   resetForNextPlayer();
 });
 

@@ -96,6 +96,7 @@ def genie_ask(req: GenieRequest):
 
 # --- Static files ---
 
+app.mount("/images", StaticFiles(directory="images"), name="images")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 

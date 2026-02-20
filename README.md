@@ -8,8 +8,8 @@ Jogo do dinossauro T-Rex (estilo Chrome) construído como um Databricks App para
 |----------------|-----|
 | **Databricks Apps** | Hospeda a aplicação web full-stack (FastAPI + arquivos estáticos) |
 | **Lakebase Provisioned** | Armazenamento PostgreSQL de baixa latência para jogadores e sessões |
-| **Model Serving (FMAPI)** | Foundation Model API (Llama 3.3 70B) alimenta o oponente de IA do jogo |
-| **Unity Catalog** | Catálogo `selbetti` vinculado ao Lakebase para governança de dados |
+| **Model Serving (FMAPI)** | Foundation Model API alimenta o oponente de IA do jogo (Llama 3.3 70B por padrão, configurável via `SERVING_ENDPOINT_NAME`) |
+| **Unity Catalog** | Catálogo vinculado ao Lakebase para governança de dados |
 | **Genie Space** | Exploração em linguagem natural dos dados do jogo diretamente do Lakebase |
 
 ## Arquitetura
@@ -50,7 +50,7 @@ t-rex-app/
 |---------|-----------|
 | `app.py` | Servidor FastAPI. Monta arquivos estáticos, define endpoints da API, inicializa banco na startup. Inclui endpoint `/metrics` de health check exigido pelo proxy do Databricks Apps. |
 | `db.py` | Camada de conexão com Lakebase (PostgreSQL). Usa `databricks-sdk` para gerar tokens OAuth para o service principal do app. Cria automaticamente as tabelas `players` e `game_sessions` na startup. Inclui refresh automático de token em caso de falha de conexão. |
-| `llm.py` | Integração com Foundation Model API via cliente compatível com OpenAI. Alimenta o oponente de IA do jogo — gera pontuações calibradas e análises personalizadas das partidas usando Llama 3.3 70B. Inclui fallback automático para garantir fluxo contínuo do jogo. |
+| `llm.py` | Integração com Foundation Model API via cliente compatível com OpenAI. Alimenta o oponente de IA do jogo — gera pontuações calibradas e análises personalizadas das partidas. O endpoint LLM é configurável via `SERVING_ENDPOINT_NAME` (padrão: Llama 3.3 70B). Inclui fallback automático para garantir fluxo contínuo do jogo. |
 | `genie.py` | Integração com Genie Conversation API via `databricks-sdk`. Permite que jogadores façam perguntas em linguagem natural sobre os dados do jogo diretamente no chat popup do ranking. |
 | `app.yaml` | Configuração de runtime do Databricks App. Roda `uvicorn` na porta **8000**. Define variáveis de ambiente para o serving endpoint, conexão Lakebase e Genie Space ID. |
 
@@ -75,7 +75,7 @@ t-rex-app/
 
 ### Passo 1: Criar Recursos no Unity Catalog
 
-Crie o catálogo `selbetti` e vincule-o à instância Lakebase (via Databricks UI: Catalog > Create Catalog > selecione "Lakebase database catalog" e vincule à instância).
+Crie um catálogo e vincule-o à instância Lakebase (via Databricks UI: Catalog > Create Catalog > selecione "Lakebase database catalog" e vincule à instância). Anote o nome do catálogo criado — ele será usado na configuração do Genie Space.
 
 ### Passo 2: Criar Instância Lakebase
 
@@ -93,13 +93,23 @@ Anote o valor `read_write_dns` da saída — você precisará dele para o `app.y
 
 ### Passo 3: Atualizar `app.yaml`
 
-Edite `app.yaml` e defina o valor de `LAKEBASE_HOST` com o DNS do Passo 2:
+Edite `app.yaml` e configure as variáveis de ambiente:
 
 ```yaml
 env:
+  - name: SERVING_ENDPOINT_NAME
+    value: "<seu-endpoint-de-llm>"        # e.g. "databricks-meta-llama-3-3-70b-instruct"
+  - name: LAKEBASE_INSTANCE_NAME
+    value: "<nome-da-instância>"          # Nome do Passo 2 (e.g. "trex-game-db")
   - name: LAKEBASE_HOST
-    value: "<seu-dns-da-instância>"
+    value: "<seu-dns-da-instância>"       # DNS (read_write_dns) do Passo 2
+  - name: GENIE_SPACE_ID
+    value: "<id-do-genie-space>"          # Criado no Passo 9
 ```
+
+> **Importante:** O `app.yaml` vem com os valores vazios. Preencha todas as variáveis antes do deploy.
+
+O `SERVING_ENDPOINT_NAME` aceita qualquer endpoint de Model Serving compatível com a API OpenAI (Llama, DBRX, Claude, etc.).
 
 ### Passo 4: Criar e Fazer Deploy do App
 
@@ -108,9 +118,7 @@ env:
 databricks apps create t-rex-game --description "T-Rex Runner - Stand de Conferência"
 
 # Sincronizar código fonte para o workspace
-databricks sync --full \
-  --exclude "__pycache__" --exclude "*.pyc" \
-  . /Workspace/Users/<seu-email>/apps/t-rex-game
+databricks sync . /Workspace/Users/<seu-email>/apps/t-rex-game
 
 # Deploy
 databricks apps deploy t-rex-game \
@@ -135,7 +143,7 @@ databricks apps update t-rex-game --json '{
     {
       "name": "serving-endpoint",
       "serving_endpoint": {
-        "name": "databricks-meta-llama-3-3-70b-instruct",
+        "name": "<seu-endpoint-de-llm>",
         "permission": "CAN_QUERY"
       }
     }
@@ -182,9 +190,7 @@ conn = psycopg2.connect(
 Após conceder permissões, refaça o deploy para acionar a criação das tabelas:
 
 ```bash
-databricks sync --full \
-  --exclude "__pycache__" --exclude "*.pyc" \
-  . /Workspace/Users/<seu-email>/apps/t-rex-game
+databricks sync . /Workspace/Users/<seu-email>/apps/t-rex-game
 
 databricks apps deploy t-rex-game \
   --source-code-path /Workspace/Users/<seu-email>/apps/t-rex-game
@@ -209,7 +215,7 @@ databricks apps run-local \
   --env LAKEBASE_HOST=<seu-dns-da-instância> \
   --env LAKEBASE_DATABASE=databricks_postgres \
   --env LAKEBASE_PORT=5432 \
-  --env SERVING_ENDPOINT_NAME=databricks-meta-llama-3-3-70b-instruct
+  --env SERVING_ENDPOINT_NAME=<seu-endpoint-de-llm>
 ```
 
 O app estará disponível em `http://localhost:8001`.
@@ -219,9 +225,7 @@ O app estará disponível em `http://localhost:8001`.
 Após alterações no código:
 
 ```bash
-databricks sync --full \
-  --exclude "__pycache__" --exclude "*.pyc" \
-  . /Workspace/Users/<seu-email>/apps/t-rex-game
+databricks sync . /Workspace/Users/<seu-email>/apps/t-rex-game
 
 databricks apps deploy t-rex-game \
   --source-code-path /Workspace/Users/<seu-email>/apps/t-rex-game
@@ -265,7 +269,7 @@ databricks apps deploy t-rex-game \
 
 ## Genie Space
 
-Um Genie Space **"T-Rex Game Analytics"** está configurado para consultar as tabelas do Lakebase diretamente via Unity Catalog (`selbetti.public.players` e `selbetti.public.game_sessions`). Isso permite exploração dos dados do jogo em linguagem natural.
+Um Genie Space **"T-Rex Game Analytics"** está configurado para consultar as tabelas do Lakebase diretamente via Unity Catalog (`<seu-catalogo>.public.players` e `<seu-catalogo>.public.game_sessions`). Isso permite exploração dos dados do jogo em linguagem natural.
 
 ### Configuração
 
@@ -277,7 +281,7 @@ databricks api post /api/2.0/genie/spaces --json '{
   "title": "T-Rex Game Analytics",
   "description": "Exploração em linguagem natural dos dados do jogo T-Rex.",
   "warehouse_id": "<id-do-sql-warehouse>",
-  "serialized_space": "{\"version\": 2, \"data_sources\": {\"tables\": [{\"identifier\": \"selbetti.public.game_sessions\"}, {\"identifier\": \"selbetti.public.players\"}]}}"
+  "serialized_space": "{\"version\": 2, \"data_sources\": {\"tables\": [{\"identifier\": \"<seu-catalogo>.public.game_sessions\"}, {\"identifier\": \"<seu-catalogo>.public.players\"}]}}"
 }'
 ```
 

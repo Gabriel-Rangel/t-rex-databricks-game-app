@@ -5,7 +5,7 @@ from databricks.sdk import WorkspaceClient
 
 logger = logging.getLogger(__name__)
 
-SPACE_ID = os.getenv("GENIE_SPACE_ID", "01f10e93a00012ba90fa5af86758879e")
+SPACE_ID = os.getenv("GENIE_SPACE_ID", "")
 
 
 def _get_client() -> WorkspaceClient:

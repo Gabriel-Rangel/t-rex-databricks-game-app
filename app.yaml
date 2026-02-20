@@ -8,13 +8,13 @@ command:
 
 env:
   - name: SERVING_ENDPOINT_NAME
-    value: "databricks-meta-llama-3-3-70b-instruct"
+    value: ""  # e.g. "databricks-meta-llama-3-3-70b-instruct"
 
   - name: LAKEBASE_INSTANCE_NAME
-    value: "trex-game-db"
+    value: ""  # e.g. "trex-game-db"
 
   - name: LAKEBASE_HOST
-    value: "instance-8d7f6ced-85e6-4c05-af9d-068669d2a42d.database.azuredatabricks.net"
+    value: ""  # DNS da instância Lakebase (read_write_dns)
 
   - name: LAKEBASE_DATABASE
     value: "databricks_postgres"
@@ -23,4 +23,4 @@ env:
     value: "5432"
 
   - name: GENIE_SPACE_ID
-    value: "01f10e93a00012ba90fa5af86758879e"
+    value: ""  # ID do Genie Space (criado no Passo 9)

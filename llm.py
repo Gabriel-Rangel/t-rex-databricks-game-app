@@ -31,7 +31,7 @@ def generate_commentary(
 ) -> str:
     """Use Foundation Model API to generate fun commentary comparing scores."""
     human_won = human_score > ai_score
-    endpoint = os.getenv("SERVING_ENDPOINT_NAME", "databricks-meta-llama-3-3-70b-instruct")
+    endpoint = os.getenv("SERVING_ENDPOINT_NAME")
 
     prompt = f"""Você é um narrador divertido e carismático em um stand de conferência de tecnologia com um jogo do dinossauro T-Rex.
 Um jogador acabou de jogar contra um oponente de IA. Gere um comentário curto e divertido (2-3 frases no máximo).

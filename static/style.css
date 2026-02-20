@@ -663,6 +663,33 @@ tr.highlight td {
   cursor: not-allowed;
 }
 
+/* ── Screen 6: Architecture ─────────────────────────────────── */
+.architecture-container {
+  gap: 20px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  text-align: center;
+}
+
+.architecture-container h2 {
+  font-size: 22px;
+  color: var(--accent);
+}
+
+.architecture-image {
+  width: 100%;
+  max-width: 900px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #F3EDE7;
+}
+
+.architecture-image img {
+  width: 100%;
+  display: block;
+}
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .logo h1 { font-size: 24px; }
