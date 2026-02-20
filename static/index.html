@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>T-Rex Runner | Selbetti Booth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ═══ Screen 1: Registration ═══ -->
+  <div id="screen-register" class="screen active">
+    <div class="container">
+      <div class="logo">
+        <pre class="dino-ascii">
+        ██████
+       ██░█████
+       ████████
+       ████
+   █  ██████████
+  ██ █████████
+  █████████
+   ████████
+    ██████
+     ████
+     █ █
+    █   █
+        </pre>
+        <h1>T-REX<br/>RUNNER</h1>
+        <p class="subtitle">Selbetti Booth Challenge</p>
+      </div>
+
+      <form id="register-form" autocomplete="off">
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" required placeholder="John Doe" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required placeholder="john@company.com" />
+        </div>
+        <div class="form-group">
+          <label for="company">Company</label>
+          <input type="text" id="company" name="company" placeholder="Acme Corp" />
+        </div>
+        <button type="submit" class="btn btn-primary">START GAME</button>
+      </form>
+
+      <div id="stats-bar" class="stats-bar">
+        <span id="stat-players">0 players</span>
+        <span id="stat-games">0 games</span>
+        <span id="stat-winrate">0% win rate</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Screen 2: Game ═══ -->
+  <div id="screen-game" class="screen">
+    <div class="container game-container">
+      <div class="game-header">
+        <span id="player-label" class="player-label"></span>
+        <span class="game-hint">SPACE = Jump &nbsp; DOWN = Duck</span>
+      </div>
+      <canvas id="game-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- ═══ Screen 3: AI Playing ═══ -->
+  <div id="screen-ai" class="screen">
+    <div class="container ai-container">
+      <h2>AI IS PLAYING...</h2>
+      <div class="ai-game-visual">
+        <canvas id="ai-canvas" width="800" height="200"></canvas>
+      </div>
+      <div class="ai-score-counter">
+        <span>AI SCORE: </span><span id="ai-score-display">00000</span>
+      </div>
+      <div class="ai-loading-bar">
+        <div id="ai-progress" class="ai-progress"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Screen 4: Results ═══ -->
+  <div id="screen-results" class="screen">
+    <div class="container results-container">
+      <div id="result-banner" class="result-banner"></div>
+
+      <div class="score-comparison">
+        <div class="score-card human">
+          <div class="score-label">YOU</div>
+          <div id="result-human-score" class="score-value">0</div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="score-card ai">
+          <div class="score-label">AI</div>
+          <div id="result-ai-score" class="score-value">0</div>
+        </div>
+      </div>
+
+      <div id="llm-commentary" class="commentary"></div>
+
+      <div id="swag-banner" class="swag-banner hidden">
+        YOU WON SWAG! Ask the booth staff to claim your prize.
+      </div>
+
+      <div class="result-actions">
+        <button id="btn-leaderboard" class="btn btn-secondary">VIEW LEADERBOARD</button>
+        <button id="btn-play-again" class="btn btn-primary">NEXT PLAYER</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Screen 5: Leaderboard ═══ -->
+  <div id="screen-leaderboard" class="screen">
+    <div class="container leaderboard-container">
+      <h2>LEADERBOARD</h2>
+      <div class="leaderboard-scroll">
+        <table id="leaderboard-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Player</th>
+              <th>Company</th>
+              <th>Score</th>
+              <th>vs AI</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body"></tbody>
+        </table>
+      </div>
+      <button id="btn-back-register" class="btn btn-primary">NEXT PLAYER</button>
+    </div>
+  </div>
+
+  <script src="/static/game.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

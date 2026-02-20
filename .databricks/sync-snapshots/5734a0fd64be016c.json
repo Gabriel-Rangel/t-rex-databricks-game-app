@@ -1,0 +1,38 @@
+{
+  "version": "v1",
+  "host": "https://adb-984752964297111.11.azuredatabricks.net",
+  "remote_path": "/Workspace/Users/gabriel.rangel@databricks.com/apps/t-rex-game",
+  "last_modified_times": {
+    "app.py": "2026-02-20T15:24:46.262010496-03:00",
+    "app.yaml": "2026-02-20T15:31:31.655622522-03:00",
+    "db.py": "2026-02-20T14:52:03.303576386-03:00",
+    "llm.py": "2026-02-20T14:07:48.391111509-03:00",
+    "requirements.txt": "2026-02-20T15:01:47.402342258-03:00",
+    "static/app.js": "2026-02-20T14:10:59.113245005-03:00",
+    "static/game.js": "2026-02-20T14:09:21.967654671-03:00",
+    "static/index.html": "2026-02-20T14:09:41.707350766-03:00",
+    "static/style.css": "2026-02-20T14:10:18.384629438-03:00"
+  },
+  "local_to_remote_names": {
+    "app.py": "app.py",
+    "app.yaml": "app.yaml",
+    "db.py": "db.py",
+    "llm.py": "llm.py",
+    "requirements.txt": "requirements.txt",
+    "static/app.js": "static/app.js",
+    "static/game.js": "static/game.js",
+    "static/index.html": "static/index.html",
+    "static/style.css": "static/style.css"
+  },
+  "remote_to_local_names": {
+    "app.py": "app.py",
+    "app.yaml": "app.yaml",
+    "db.py": "db.py",
+    "llm.py": "llm.py",
+    "requirements.txt": "requirements.txt",
+    "static/app.js": "static/app.js",
+    "static/game.js": "static/game.js",
+    "static/index.html": "static/index.html",
+    "static/style.css": "static/style.css"
+  }
+}

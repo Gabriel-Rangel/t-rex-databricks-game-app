@@ -1,0 +1,388 @@
+/* ── Reset & Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #1a1a2e;
+  --bg-light: #16213e;
+  --fg: #e0e0e0;
+  --accent: #00ff88;
+  --accent-dim: #00cc6a;
+  --danger: #ff4757;
+  --card-bg: #0f3460;
+  --border: #2a2a5e;
+  --font-pixel: 'Press Start 2P', monospace;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-pixel);
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden;
+}
+
+/* ── Screen System ───────────────────────────────────────────── */
+.screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+}
+.screen.active { display: flex; }
+
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* ── Screen 1: Registration ──────────────────────────────────── */
+.logo {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.dino-ascii {
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 1.1;
+  color: var(--accent);
+  margin-bottom: 12px;
+  user-select: none;
+}
+
+.logo h1 {
+  font-size: 36px;
+  line-height: 1.3;
+  color: var(--accent);
+  text-shadow: 3px 3px 0 rgba(0, 255, 136, 0.2);
+}
+
+.logo .subtitle {
+  font-size: 11px;
+  color: var(--fg);
+  margin-top: 8px;
+  letter-spacing: 2px;
+}
+
+form {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 10px;
+  margin-bottom: 6px;
+  color: var(--accent-dim);
+  text-transform: uppercase;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 14px;
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  background: var(--bg-light);
+  border: 2px solid var(--border);
+  color: var(--fg);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: var(--accent);
+}
+
+.form-group input::placeholder {
+  color: #555;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn {
+  display: inline-block;
+  font-family: var(--font-pixel);
+  font-size: 13px;
+  padding: 14px 28px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn:active { transform: scale(0.96); }
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  width: 100%;
+  max-width: 400px;
+  margin-top: 8px;
+}
+.btn-primary:hover { box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+.btn-secondary:hover { background: rgba(0, 255, 136, 0.1); }
+
+/* ── Stats Bar ───────────────────────────────────────────────── */
+.stats-bar {
+  display: flex;
+  gap: 20px;
+  margin-top: 32px;
+  font-size: 9px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+/* ── Screen 2: Game ──────────────────────────────────────────── */
+.game-container {
+  justify-content: center;
+  padding: 20px;
+}
+
+.game-header {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.player-label {
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.game-hint {
+  font-size: 9px;
+  color: #666;
+}
+
+#game-canvas {
+  width: 100%;
+  max-width: 800px;
+  border: 2px solid var(--border);
+  background: #f7f7f7;
+  image-rendering: pixelated;
+  cursor: pointer;
+}
+
+/* ── Screen 3: AI Playing ────────────────────────────────────── */
+.ai-container {
+  text-align: center;
+  gap: 20px;
+}
+
+.ai-container h2 {
+  font-size: 22px;
+  color: var(--danger);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.ai-game-visual {
+  width: 100%;
+  max-width: 800px;
+}
+
+#ai-canvas {
+  width: 100%;
+  max-width: 800px;
+  border: 2px solid var(--border);
+  background: #f7f7f7;
+  image-rendering: pixelated;
+}
+
+.ai-score-counter {
+  font-size: 18px;
+  color: var(--danger);
+}
+
+.ai-loading-bar {
+  width: 100%;
+  max-width: 400px;
+  height: 8px;
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.ai-progress {
+  height: 100%;
+  width: 0%;
+  background: var(--danger);
+  transition: width 0.1s linear;
+}
+
+/* ── Screen 4: Results ───────────────────────────────────────── */
+.results-container {
+  text-align: center;
+  gap: 20px;
+}
+
+.result-banner {
+  font-size: 24px;
+  padding: 16px;
+}
+
+.result-banner.win {
+  color: var(--accent);
+  text-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+}
+
+.result-banner.lose {
+  color: var(--danger);
+}
+
+.score-comparison {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.score-card {
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  padding: 20px 32px;
+  min-width: 150px;
+}
+
+.score-card.human { border-color: var(--accent); }
+.score-card.ai { border-color: var(--danger); }
+
+.score-label {
+  font-size: 11px;
+  margin-bottom: 8px;
+  color: #aaa;
+}
+
+.score-value {
+  font-size: 28px;
+}
+
+.score-card.human .score-value { color: var(--accent); }
+.score-card.ai .score-value { color: var(--danger); }
+
+.vs {
+  font-size: 20px;
+  color: #666;
+}
+
+.commentary {
+  font-size: 11px;
+  line-height: 1.8;
+  max-width: 600px;
+  color: #ccc;
+  padding: 16px;
+  background: var(--bg-light);
+  border-left: 3px solid var(--accent);
+}
+
+.swag-banner {
+  font-size: 14px;
+  color: var(--bg);
+  background: var(--accent);
+  padding: 16px 24px;
+  animation: glow 1.5s ease-in-out infinite;
+}
+
+.swag-banner.hidden { display: none; }
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 136, 0.4); }
+  50% { box-shadow: 0 0 30px rgba(0, 255, 136, 0.8); }
+}
+
+.result-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Screen 5: Leaderboard ───────────────────────────────────── */
+.leaderboard-container {
+  gap: 20px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.leaderboard-container h2 {
+  font-size: 22px;
+  color: var(--accent);
+}
+
+.leaderboard-scroll {
+  width: 100%;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+}
+
+th {
+  text-align: left;
+  padding: 10px 8px;
+  color: var(--accent-dim);
+  border-bottom: 2px solid var(--border);
+  font-weight: normal;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+}
+
+td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+tr.highlight td {
+  color: var(--accent);
+  background: rgba(0, 255, 136, 0.05);
+}
+
+.badge-win {
+  color: var(--accent);
+}
+.badge-lose {
+  color: var(--danger);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .logo h1 { font-size: 24px; }
+  .score-comparison { flex-direction: column; gap: 12px; }
+  .score-card { min-width: 120px; padding: 14px 24px; }
+  .score-value { font-size: 22px; }
+  .result-banner { font-size: 18px; }
+  .stats-bar { flex-direction: column; gap: 8px; align-items: center; }
+}
